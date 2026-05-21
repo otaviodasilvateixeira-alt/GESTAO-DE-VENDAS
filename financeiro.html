@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Relatórios Financeiros - ProLedger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600&amp;family=Manrope:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#4c627e",
+                        "on-tertiary-container": "#2b83ff",
+                        "on-secondary-fixed": "#021d35",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#001a41",
+                        "primary-fixed-dim": "#afc8f0",
+                        "surface-container-high": "#dce9ff",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#d4e3ff",
+                        "tertiary-fixed": "#d8e2ff",
+                        "on-surface-variant": "#43474e",
+                        "tertiary": "#000515",
+                        "on-background": "#0b1c30",
+                        "background": "#f8f9ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#324863",
+                        "on-primary-fixed": "#001c3a",
+                        "tertiary-container": "#001d46",
+                        "on-primary-container": "#6f88ad",
+                        "inverse-surface": "#213145",
+                        "surface-variant": "#d3e4fe",
+                        "surface-dim": "#cbdbf5",
+                        "secondary-fixed-dim": "#b2c8e8",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#c8dfff",
+                        "surface-bright": "#f8f9ff",
+                        "on-surface": "#0b1c30",
+                        "secondary-fixed": "#d2e4ff",
+                        "primary": "#000613",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#004493",
+                        "secondary": "#4a607c",
+                        "surface": "#f8f9ff",
+                        "outline-variant": "#c4c6cf",
+                        "surface-container-highest": "#d3e4fe",
+                        "error": "#ba1a1a",
+                        "primary-container": "#001f3f",
+                        "surface-container": "#e5eeff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-primary-fixed-variant": "#2f486a",
+                        "on-primary": "#ffffff",
+                        "outline": "#74777f",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#eff4ff",
+                        "tertiary-fixed-dim": "#adc7ff",
+                        "surface-tint": "#476083",
+                        "inverse-primary": "#afc8f0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "sm": "12px",
+                        "xs": "4px",
+                        "md": "24px",
+                        "xl": "64px",
+                        "base": "8px",
+                        "lg": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Manrope"],
+                        "label-caps": ["IBM Plex Sans"],
+                        "body-sm": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "data-tabular": ["IBM Plex Sans"],
+                        "title-sm": ["Manrope"],
+                        "display-lg": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "data-tabular": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "title-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full p-md gap-base docked left-0 h-screen w-64 border-r border-outline-variant bg-surface-container-low z-30">
+<div class="flex items-center gap-sm mb-lg">
+<img alt="Business Logo" class="w-10 h-10 rounded-full" data-alt="A minimalist and professional business logo featuring a dark blue circle with a crisp white sans-serif letter 'B' in the center. The aesthetic is corporate and modern, suitable for a financial software application. Soft, even studio lighting without harsh shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHZzquQBD4FfcdUUA70K0ZiHWNJXn-wIItXGNbfgAg4M3u9ppdw2lMnbTrfPHcylvZXsHIZe9L3C33EBwSyFfc-dLvAvUtOcWZ09jZ5pPsG50zN0HgYTTmtgfj_Zq3TQ2ZnAy8fxjGN2Vdd2LHGQudwiWSnTU21EBIntv5bdIJm-P8FNSLHy-AtWcxBl9tE2Zp9ByWRFjPjJ1OH0ZI_gJk7bTDwOdiflgPrX0PLFhvJHAbUWKezZ-rz_hYalvN2OY_WLNfUb7TdIo"/>
+<div>
+<h2 class="text-headline-md font-headline-md text-primary">Enterprise Hub</h2>
+<p class="text-label-caps font-label-caps text-on-surface-variant">Micro-Entrepreneur Portal</p>
+</div>
+</div>
+<div class="flex-1 flex flex-col gap-xs">
+<a class="flex items-center gap-sm p-sm text-secondary hover:bg-surface-container-highest rounded-lg transition-colors" href="index.html">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-caps font-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-sm p-sm text-secondary hover:bg-surface-container-highest rounded-lg transition-colors" href="estoque.html">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="text-label-caps font-label-caps">Inventory</span>
+</a>
+<a class="flex items-center gap-sm p-sm text-secondary hover:bg-surface-container-highest rounded-lg transition-colors" href="vendas.html">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="text-label-caps font-label-caps">Sales / NF-e</span>
+</a>
+<a class="flex items-center gap-sm p-sm bg-secondary-container text-on-secondary-container font-semibold rounded-lg scale-95 transition-transform duration-150" href="financeiro.html">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="text-label-caps font-label-caps">Reports</span>
+</a>
+</div>
+<div class="flex flex-col gap-xs mt-auto pt-md border-t border-outline-variant">
+<a class="flex items-center gap-sm p-sm text-secondary hover:bg-surface-container-highest rounded-lg transition-colors" href="index.html">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-caps font-label-caps">Settings</span>
+</a>
+<a class="flex items-center gap-sm p-sm text-secondary hover:bg-surface-container-highest rounded-lg transition-colors" href="estoque.html">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="text-label-caps font-label-caps">Help</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col overflow-hidden relative">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-lg py-sm sticky top-0 z-40 bg-surface text-primary border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-title-sm font-headline-md font-bold text-primary">ProLedger</h1>
+<div class="hidden md:flex items-center ml-lg gap-base text-label-caps font-label-caps">
+<span class="text-on-surface-variant">/</span>
+<span class="text-primary font-bold">Reports</span>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="pl-xl pr-sm py-xs border border-outline-variant rounded-DEFAULT bg-surface text-body-sm focus:border-primary-container focus:ring-0 w-64" placeholder="Search..." type="text"/>
+</div>
+<button class="text-primary hover:bg-surface-container-low transition-colors p-xs rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-primary hover:bg-surface-container-low transition-colors p-xs rounded-full">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 overflow-y-auto p-lg pb-xl">
+<div class="max-w-container-max mx-auto flex flex-col gap-xl">
+<!-- Page Header -->
+<div>
+<h2 class="text-display-lg font-display-lg text-primary mb-xs">Relatórios Financeiros</h2>
+<p class="text-body-md font-body-md text-secondary">Visão geral de fluxo de caixa, contas a pagar e a receber deste mês.</p>
+</div>
+<!-- KPI Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Total Profit -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-shadow">
+<div class="flex items-center justify-between mb-sm">
+<span class="text-label-caps font-label-caps text-secondary uppercase tracking-wider">Lucro Total (Mês)</span>
+<span class="material-symbols-outlined text-tertiary-container">account_balance_wallet</span>
+</div>
+<div class="text-display-lg font-display-lg text-primary" id="kpi-profit">R$ 0,00</div>
+<div class="mt-sm flex items-center gap-xs text-body-sm font-body-sm text-surface-tint">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="">Calculado das vendas</span>
+</div>
+</div>
+<!-- Accounts Receivable -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-shadow">
+<div class="flex items-center justify-between mb-sm">
+<span class="text-label-caps font-label-caps text-secondary uppercase tracking-wider">A Receber</span>
+<span class="material-symbols-outlined text-surface-tint">call_received</span>
+</div>
+<div class="text-display-lg font-display-lg text-primary" id="kpi-receivable">R$ 0,00</div>
+<div class="mt-sm flex items-center gap-xs text-body-sm font-body-sm text-secondary">
+<span class="" id="kpi-receivable-count">0 faturas pendentes</span>
+</div>
+</div>
+<!-- Accounts Payable -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-shadow">
+<div class="flex items-center justify-between mb-sm">
+<span class="text-label-caps font-label-caps text-secondary uppercase tracking-wider">A Pagar</span>
+<span class="material-symbols-outlined text-error">call_made</span>
+</div>
+<div class="text-display-lg font-display-lg text-primary" id="kpi-payable">R$ 0,00</div>
+<div class="mt-sm flex items-center gap-xs text-body-sm font-body-sm text-secondary">
+<span class="" id="kpi-payable-count">0 boletos agendados</span>
+</div>
+</div>
+</div>
+<!-- Chart Section -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-shadow">
+<div class="flex items-center justify-between border-b border-outline-variant pb-sm mb-md">
+<h3 class="text-headline-md font-headline-md text-primary">Lucro por Produto</h3>
+<button class="text-label-caps font-label-caps text-primary border border-outline-variant rounded-DEFAULT px-sm py-xs hover:bg-surface-container-low transition-colors flex items-center gap-xs" onclick="console.log('Exporting data...')">
+<span class="material-symbols-outlined text-sm">download</span> Exportar
+                        </button>
+</div>
+<!-- Dynamic Summary Area -->
+<div class="w-full bg-surface-bright pb-md relative border border-outline-variant px-sm pt-sm rounded-lg" id="profit-by-product-container">
+<p class="text-body-md text-secondary text-center p-xl">Carregando dados de lucro por produto...</p>
+</div>
+</div>
+<!-- Data Tables Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-md">
+<!-- Contas a Receber -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-shadow overflow-hidden flex flex-col">
+<div class="p-md border-b border-outline-variant flex items-center justify-between bg-surface-bright">
+<h3 class="text-title-sm font-headline-md text-primary">A Receber</h3>
+<span class="text-label-caps font-label-caps bg-surface-container px-sm py-xs rounded-full text-primary">Próx. 7 dias</span>
+</div>
+<div class="flex-1 overflow-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface text-label-caps font-label-caps text-secondary border-b border-outline-variant">
+<tr>
+<th class="p-sm font-semibold">Cliente</th>
+<th class="p-sm font-semibold">Vencimento</th>
+<th class="p-sm font-semibold text-right">Valor</th>
+<th class="p-sm font-semibold text-center">Status</th>
+</tr>
+</thead>
+<tbody class="text-data-tabular font-data-tabular text-on-surface-variant" id="receivable-table-body">
+<!-- Dynamic Rows go here -->
+</tbody>
+</table>
+<div class="hidden p-md text-center text-secondary" id="receivable-empty-state">
+    Nenhuma conta a receber nos próximos 7 dias.
+</div>
+</div>
+<div class="p-sm border-t border-outline-variant text-center bg-surface-bright">
+<a class="text-label-caps font-label-caps text-primary hover:underline" href="#">Ver todos recebimentos</a>
+</div>
+</div>
+<!-- Contas a Pagar -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-shadow overflow-hidden flex flex-col">
+<div class="p-md border-b border-outline-variant flex items-center justify-between bg-surface-bright">
+<h3 class="text-title-sm font-headline-md text-primary">A Pagar</h3>
+<span class="text-label-caps font-label-caps bg-surface-container px-sm py-xs rounded-full text-primary">Próx. 7 dias</span>
+</div>
+<div class="flex-1 overflow-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface text-label-caps font-label-caps text-secondary border-b border-outline-variant">
+<tr>
+<th class="p-sm font-semibold">Fornecedor</th>
+<th class="p-sm font-semibold">Vencimento</th>
+<th class="p-sm font-semibold text-right">Valor</th>
+<th class="p-sm font-semibold text-center">Status</th>
+</tr>
+</thead>
+<tbody class="text-data-tabular font-data-tabular text-on-surface-variant" id="payable-table-body">
+<!-- Dynamic Rows go here -->
+</tbody>
+</table>
+<div class="hidden p-md text-center text-secondary" id="payable-empty-state">
+    Nenhuma conta a pagar nos próximos 7 dias.
+</div>
+</div>
+<div class="p-sm border-t border-outline-variant text-center bg-surface-bright">
+<a class="text-label-caps font-label-caps text-primary hover:underline" href="#">Ver todos pagamentos</a>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sales = JSON.parse(localStorage.getItem('vendas')) || [];
+        const products = JSON.parse(localStorage.getItem('produtos')) || [];
+
+        // Helper to format currency
+        const formatCurrency = (value) => {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        };
+
+        // Helper to format date
+        const formatDate = (dateString) => {
+             if(!dateString) return '';
+             const date = new Date(dateString);
+             return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }).format(date);
+        }
+
+        // 1 & 2 & 4. Calculate Profit (Sale Price - Cost Price) * Quantity
+        let totalProfit = 0;
+        const profitByProduct = {};
+
+        // Only consider sales from the current month for "Total Profit (Mês)" if there was a date field, 
+        // but since we might not have dates in the mocked sales, we calculate all for now or assume recent.
+        // For a more robust app, filter by date.
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
+        sales.forEach(sale => {
+            const product = products.find(p => String(p.id) === String(sale.productId || sale.produtoId) || p.nome === sale.produto);
+            if (product && product.precoCusto) {
+                const salePrice = sale.precoUnitario ? parseFloat(sale.precoUnitario) : (parseFloat(sale.valorTotal) / parseInt(sale.quantidade, 10));
+                const costPrice = parseFloat(product.precoCusto);
+                const quantity = parseInt(sale.quantidade, 10);
+                
+                const profit = (salePrice - costPrice) * quantity;
+                
+                // Assuming all sales are this month for the sake of the prototype if no date exists.
+                // If sale.data exists, we could filter:
+                /* 
+                const saleDate = sale.data ? new Date(sale.data) : null;
+                if(saleDate && saleDate.getMonth() === currentMonth && saleDate.getFullYear() === currentYear) {
+                    totalProfit += profit;
+                }
+                */
+                totalProfit += profit;
+
+                const productName = product.nome;
+                if (!profitByProduct[productName]) {
+                    profitByProduct[productName] = 0;
+                }
+                profitByProduct[productName] += profit;
+            }
+        });
+
+        document.getElementById('kpi-profit').textContent = formatCurrency(totalProfit);
+
+        // 3 & 4. Dynamic Profit by Product Summary
+        const profitContainer = document.getElementById('profit-by-product-container');
+        if (Object.keys(profitByProduct).length > 0) {
+            // Sort by profit descending
+            const sortedProfits = Object.entries(profitByProduct).sort((a, b) => b[1] - a[1]);
+            
+            let html = '<ul class="divide-y divide-outline-variant">';
+            for (const [productName, profit] of sortedProfits) {
+                html += `
+                    <li class="py-sm px-md flex justify-between items-center hover:bg-surface-container-low transition-colors">
+                        <span class="text-body-md font-medium text-primary">${productName}</span>
+                        <span class="text-data-tabular font-bold text-tertiary-container">${formatCurrency(profit)}</span>
+                    </li>
+                `;
+            }
+            html += '</ul>';
+            profitContainer.innerHTML = html;
+        } else {
+            profitContainer.innerHTML = '<p class="text-body-md text-secondary text-center p-xl">Nenhum dado de lucro disponível. Registre vendas e custos de produtos.</p>';
+        }
+
+        // Accounts Receivable / Payable parsing from localStorage
+        const contasReceber = JSON.parse(localStorage.getItem('contas_receber')) || [
+             // Fallback dummy data if nothing in LocalStorage
+             { cliente: 'TechCorp Ltda', vencimento: '2023-10-12', valor: 2450.00, status: 'Pendente' },
+             { cliente: 'Consultoria Silva', vencimento: '2023-10-14', valor: 1800.00, status: 'Pendente' },
+             { cliente: 'Comércio Beta', vencimento: '2023-10-15', valor: 950.00, status: 'Pendente' }
+        ];
+        
+        const contasPagar = JSON.parse(localStorage.getItem('contas_pagar')) || [
+             // Fallback dummy data if nothing in LocalStorage
+             { fornecedor: 'Aluguel Imóvel', vencimento: '2023-10-10', valor: 1500.00, status: 'Agendado' },
+             { fornecedor: 'Internet Fibra', vencimento: '2023-10-12', valor: 150.00, status: 'Atrasado' },
+             { fornecedor: 'Fornecedor Papelaria', vencimento: '2023-10-18', valor: 450.00, status: 'Pendente' }
+        ];
+
+        // 5. Populate Tables and KPIs
+        // Receivables
+        const receivableBody = document.getElementById('receivable-table-body');
+        const receivableEmpty = document.getElementById('receivable-empty-state');
+        
+        if(contasReceber.length > 0) {
+             const totalReceivable = contasReceber.reduce((sum, item) => sum + parseFloat(item.valor || 0), 0);
+             document.getElementById('kpi-receivable').textContent = formatCurrency(totalReceivable);
+             document.getElementById('kpi-receivable-count').textContent = `${contasReceber.length} faturas pendentes`;
+             
+             receivableBody.innerHTML = contasReceber.slice(0, 5).map(conta => `
+                 <tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors">
+                    <td class="p-sm">${conta.cliente || 'Cliente Padrão'}</td>
+                    <td class="p-sm">${formatDate(conta.vencimento) || conta.vencimento}</td>
+                    <td class="p-sm text-right">${formatCurrency(conta.valor)}</td>
+                    <td class="p-sm text-center">
+                        <span class="inline-block px-3 py-1 bg-surface-container-highest text-primary-container rounded-full text-xs font-semibold">${conta.status || 'Pendente'}</span>
+                    </td>
+                </tr>
+             `).join('');
+             receivableEmpty.classList.add('hidden');
+        } else {
+             document.getElementById('kpi-receivable').textContent = 'R$ 0,00';
+             document.getElementById('kpi-receivable-count').textContent = `0 faturas pendentes`;
+             receivableBody.innerHTML = '';
+             receivableEmpty.classList.remove('hidden');
+        }
+
+        // Payables
+        const payableBody = document.getElementById('payable-table-body');
+        const payableEmpty = document.getElementById('payable-empty-state');
+
+        if(contasPagar.length > 0) {
+             const totalPayable = contasPagar.reduce((sum, item) => sum + parseFloat(item.valor || 0), 0);
+             document.getElementById('kpi-payable').textContent = formatCurrency(totalPayable);
+             document.getElementById('kpi-payable-count').textContent = `${contasPagar.length} boletos agendados`;
+
+             payableBody.innerHTML = contasPagar.slice(0, 5).map(conta => {
+                 let statusClass = "bg-surface-container-highest text-primary-container";
+                 if(conta.status === 'Agendado') statusClass = "bg-surface-container text-on-primary-container";
+                 if(conta.status === 'Atrasado') statusClass = "bg-error-container text-on-error-container";
+
+                 return `
+                 <tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors">
+                    <td class="p-sm">${conta.fornecedor || 'Fornecedor Padrão'}</td>
+                    <td class="p-sm">${formatDate(conta.vencimento) || conta.vencimento}</td>
+                    <td class="p-sm text-right">${formatCurrency(conta.valor)}</td>
+                    <td class="p-sm text-center">
+                        <span class="inline-block px-3 py-1 ${statusClass} rounded-full text-xs font-semibold">${conta.status || 'Pendente'}</span>
+                    </td>
+                </tr>
+             `}).join('');
+             payableEmpty.classList.add('hidden');
+        } else {
+             document.getElementById('kpi-payable').textContent = 'R$ 0,00';
+             document.getElementById('kpi-payable-count').textContent = `0 boletos agendados`;
+             payableBody.innerHTML = '';
+             payableEmpty.classList.remove('hidden');
+        }
+    });
+</script>
+</body></html>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ProLedger - Sales / NF-e</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600&amp;family=Manrope:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-container": "#4c627e",
+                      "on-tertiary-container": "#2b83ff",
+                      "on-secondary-fixed": "#021d35",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed": "#001a41",
+                      "primary-fixed-dim": "#afc8f0",
+                      "surface-container-high": "#dce9ff",
+                      "on-error": "#ffffff",
+                      "primary-fixed": "#d4e3ff",
+                      "tertiary-fixed": "#d8e2ff",
+                      "on-surface-variant": "#43474e",
+                      "tertiary": "#000515",
+                      "on-background": "#0b1c30",
+                      "background": "#f8f9ff",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed-variant": "#324863",
+                      "on-primary-fixed": "#001c3a",
+                      "tertiary-container": "#001d46",
+                      "on-primary-container": "#6f88ad",
+                      "inverse-surface": "#213145",
+                      "surface-variant": "#d3e4fe",
+                      "surface-dim": "#cbdbf5",
+                      "secondary-fixed-dim": "#b2c8e8",
+                      "on-error-container": "#93000a",
+                      "secondary-container": "#c8dfff",
+                      "surface-bright": "#f8f9ff",
+                      "on-surface": "#0b1c30",
+                      "secondary-fixed": "#d2e4ff",
+                      "primary": "#000613",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#004493",
+                      "secondary": "#4a607c",
+                      "surface": "#f8f9ff",
+                      "outline-variant": "#c4c6cf",
+                      "surface-container-highest": "#d3e4fe",
+                      "error": "#ba1a1a",
+                      "primary-container": "#001f3f",
+                      "surface-container": "#e5eeff",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-primary-fixed-variant": "#2f486a",
+                      "on-primary": "#ffffff",
+                      "outline": "#74777f",
+                      "on-secondary": "#ffffff",
+                      "surface-container-low": "#eff4ff",
+                      "tertiary-fixed-dim": "#adc7ff",
+                      "surface-tint": "#476083",
+                      "inverse-primary": "#afc8f0"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "container-max": "1280px",
+                      "gutter": "24px",
+                      "sm": "12px",
+                      "xs": "4px",
+                      "md": "24px",
+                      "xl": "64px",
+                      "base": "8px",
+                      "lg": "40px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Manrope"
+                      ],
+                      "label-caps": [
+                              "IBM Plex Sans"
+                      ],
+                      "body-sm": [
+                              "Manrope"
+                      ],
+                      "body-md": [
+                              "Manrope"
+                      ],
+                      "data-tabular": [
+                              "IBM Plex Sans"
+                      ],
+                      "title-sm": [
+                              "Manrope"
+                      ],
+                      "display-lg": [
+                              "Manrope"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "data-tabular": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "title-sm": [
+                              "18px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+      </style>
+</head>
+<body class="bg-background text-on-surface flex h-screen overflow-hidden antialiased font-body-md text-body-md">
+<!-- SideNavBar (WEB) -->
+<nav class="hidden md:flex flex-col h-full p-md gap-base docked left-0 w-64 shrink-0 bg-surface-container-low dark:bg-on-secondary-fixed border-r border-outline-variant">
+<!-- Header -->
+<div class="flex items-center gap-sm mb-lg">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined icon-fill">storefront</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-sm text-title-sm text-primary dark:text-primary-fixed">Enterprise Hub</span>
+<span class="font-body-sm text-body-sm text-secondary">Micro-Entrepreneur Portal</span>
+</div>
+</div>
+<!-- CTA -->
+<!-- Main Navigation -->
+<div class="flex flex-col gap-xs flex-1">
+<a class="flex items-center gap-sm p-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-on-secondary-fixed-variant hover:bg-surface-container-highest transition-colors" href="index.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-sm p-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-on-secondary-fixed-variant hover:bg-surface-container-highest transition-colors" href="estoque.html">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-caps text-label-caps">Inventory</span>
+</a>
+<!-- Active State -->
+<a class="flex items-center gap-sm p-sm rounded-lg bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container font-semibold Active: scale-95 transition-transform duration-150" href="vendas.html">
+<span class="material-symbols-outlined icon-fill">receipt_long</span>
+<span class="font-label-caps text-label-caps">Sales / NF-e</span>
+</a>
+<a class="flex items-center gap-sm p-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-on-secondary-fixed-variant hover:bg-surface-container-highest transition-colors" href="financeiro.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Reports</span>
+</a>
+</div>
+<!-- Footer Navigation -->
+<div class="flex flex-col gap-xs mt-auto border-t border-outline-variant pt-md">
+<a class="flex items-center gap-sm p-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+<a class="flex items-center gap-sm p-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-label-caps text-label-caps">Help</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex flex-col flex-1 h-full overflow-hidden">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-lg py-sm sticky top-0 z-40 bg-surface dark:bg-on-background border-b border-outline-variant dark:border-on-secondary-fixed-variant shrink-0">
+<!-- Search Bar on Left -->
+<div class="flex items-center relative w-64">
+<span class="material-symbols-outlined absolute left-sm text-outline">search</span>
+<input class="w-full pl-xl pr-sm py-xs bg-surface-container-low border border-outline-variant rounded-lg font-body-sm text-body-sm focus:border-primary-container focus:ring-0 text-on-surface" placeholder="Buscar..." type="text"/>
+</div>
+<!-- Brand Logo Center -->
+<div class="absolute left-1/2 transform -translate-x-1/2">
+<span class="text-title-sm font-headline-md font-bold text-primary dark:text-primary-fixed">ProLedger</span>
+</div>
+<!-- Trailing Icons -->
+<div class="flex items-center gap-md text-primary dark:text-primary-fixed">
+<button class="hover:bg-surface-container-low dark:hover:bg-on-secondary-fixed-variant transition-colors p-xs rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="hover:bg-surface-container-low dark:hover:bg-on-secondary-fixed-variant transition-colors p-xs rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<main class="flex-1 overflow-y-auto p-lg relative">
+<div class="max-w-container-max mx-auto flex flex-col gap-xl">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+<div>
+<h1 class="font-display-lg text-display-lg text-primary">Vendas e NF-e</h1>
+<p class="font-body-md text-body-md text-secondary mt-xs">Gerencie suas vendas recentes e emita notas fiscais eletrônicas.</p>
+</div>
+<div class="flex items-center gap-sm">
+<button class="px-md py-sm border border-outline rounded-lg text-primary font-label-caps text-label-caps hover:bg-surface-container-low transition-colors">
+                            Exportar Relatório
+                        </button>
+<button class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-label-caps text-label-caps flex items-center gap-xs hover:opacity-90 transition-opacity" onclick="document.getElementById('sale-form-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                            Nova Venda
+                        </button>
+</div>
+</div>
+<!-- Bento Grid Summary -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col gap-sm shadow-sm">
+<span class="font-label-caps text-label-caps text-secondary">Vendas Totais</span>
+<span class="font-display-lg text-display-lg text-primary" id="total-sales-value">R$ 0,00</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col gap-sm shadow-sm">
+<span class="font-label-caps text-label-caps text-secondary">NF-es Pendentes</span>
+<div class="flex items-center gap-sm">
+<span class="font-display-lg text-display-lg text-primary" id="pending-nfe-count">0</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col gap-sm shadow-sm">
+<span class="font-label-caps text-label-caps text-secondary">NF-es Emitidas</span>
+<span class="font-display-lg text-display-lg text-primary" id="emitted-nfe-count">0</span>
+</div>
+</div>
+<!-- Data Table Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="px-md py-md border-b border-outline-variant flex justify-between items-center bg-surface-bright">
+<h2 class="font-headline-md text-headline-md text-primary">Histórico Recente</h2>
+<button class="material-symbols-outlined text-secondary hover:text-primary transition-colors">filter_list</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant font-label-caps text-label-caps text-secondary">
+<th class="px-md py-sm font-normal">Data</th>
+<th class="px-md py-sm font-normal">Cliente / Referência</th>
+<th class="px-md py-sm font-normal">Produto</th>
+<th class="px-md py-sm font-normal">Qtd</th>
+<th class="px-md py-sm font-normal">Valor</th>
+<th class="px-md py-sm font-normal">Status NF-e</th>
+<th class="px-md py-sm font-normal text-right">Ação</th>
+</tr>
+</thead>
+<tbody class="font-data-tabular text-data-tabular text-on-surface" id="sales-table-body">
+<!-- Dynamic rows will be inserted here -->
+</tbody>
+</table>
+<div class="p-md text-center text-secondary hidden" id="empty-state">
+                Nenhuma venda registrada
+              </div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Fallback based on rules) -->
+<nav class="md:hidden flex justify-around items-center w-full bg-surface border-t border-outline-variant p-sm shrink-0 z-40 fixed bottom-0">
+<a class="flex flex-col items-center gap-xs text-secondary hover:text-primary transition-colors" href="index.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-[10px] font-semibold">Dash</span>
+</a>
+<a class="flex flex-col items-center gap-xs text-secondary hover:text-primary transition-colors" href="estoque.html">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-caps text-[10px] font-semibold">Inv</span>
+</a>
+<a class="flex flex-col items-center gap-xs text-primary font-bold" href="vendas.html">
+<span class="material-symbols-outlined icon-fill">receipt_long</span>
+<span class="font-label-caps text-[10px] font-semibold">Vendas</span>
+</a>
+<a class="flex flex-col items-center gap-xs text-secondary hover:text-primary transition-colors" href="financeiro.html">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-[10px] font-semibold">Relat</span>
+</a>
+</nav>
+<!-- Sale Form Modal -->
+<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden" id="sale-form-modal">
+<div class="bg-surface-container-lowest rounded-xl shadow-lg w-full max-w-md p-md flex flex-col gap-md">
+<div class="flex justify-between items-center border-b border-outline-variant pb-sm">
+<h2 class="font-headline-md text-primary">Registrar Nova Venda</h2>
+<button class="material-symbols-outlined text-secondary hover:text-primary" onclick="document.getElementById('sale-form-modal').classList.add('hidden')">close</button>
+</div>
+<form class="flex flex-col gap-sm" id="new-sale-form">
+<div>
+<label class="block font-label-caps text-secondary mb-xs">Cliente</label>
+<input class="w-full px-sm py-xs border border-outline-variant rounded bg-surface focus:border-primary focus:ring-1 focus:ring-primary" id="sale-client" required="" type="text"/>
+</div>
+<div>
+<label class="block font-label-caps text-secondary mb-xs">Produto</label>
+<select class="w-full px-sm py-xs border border-outline-variant rounded bg-surface focus:border-primary focus:ring-1 focus:ring-primary" id="sale-product" required="">
+<!-- Options populated dynamically -->
+</select>
+</div>
+<div class="grid grid-cols-2 gap-sm">
+<div>
+<label class="block font-label-caps text-secondary mb-xs">Quantidade</label>
+<input class="w-full px-sm py-xs border border-outline-variant rounded bg-surface focus:border-primary focus:ring-1 focus:ring-primary" id="sale-quantity" min="1" required="" type="number"/>
+</div>
+<div>
+<label class="block font-label-caps text-secondary mb-xs">Valor Total (R$)</label>
+<input class="w-full px-sm py-xs border border-outline-variant rounded bg-surface focus:border-primary focus:ring-1 focus:ring-primary" id="sale-value" min="0.01" required="" step="0.01" type="number"/>
+</div>
+</div>
+<div class="flex justify-end gap-sm mt-sm">
+<button class="px-md py-sm border border-outline rounded-lg text-primary font-label-caps" onclick="document.getElementById('sale-form-modal').classList.add('hidden')" type="button">Cancelar</button>
+<button class="px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-label-caps" type="submit">Salvar Venda</button>
+</div>
+</form>
+</div>
+</div>
+<script>
+    // Initialize mock inventory if empty
+    if (!localStorage.getItem('inventory')) {
+        localStorage.setItem('inventory', JSON.stringify([
+            { id: '1', name: 'Notebook Pro', stock: 15, price: 4500 },
+            { id: '2', name: 'Smartphone X', stock: 30, price: 2500 },
+            { id: '3', name: 'Teclado Mecânico', stock: 50, price: 350 }
+        ]));
+    }
+    
+    // Initialize sales if empty
+    if (!localStorage.getItem('sales')) {
+        localStorage.setItem('sales', JSON.stringify([]));
+    }
+
+    const inventory = JSON.parse(localStorage.getItem('inventory'));
+    let sales = JSON.parse(localStorage.getItem('sales'));
+
+    const productSelect = document.getElementById('sale-product');
+    const quantityInput = document.getElementById('sale-quantity');
+    const valueInput = document.getElementById('sale-value');
+
+    // Populate product select
+    function renderProductOptions() {
+        productSelect.innerHTML = '<option value="" disabled selected>Selecione um produto</option>';
+        inventory.forEach(item => {
+            if (item.stock > 0) {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = `${item.name} (Estoque: ${item.stock}) - R$ ${item.price.toFixed(2).replace('.', ',')}`;
+                option.dataset.price = item.price;
+                productSelect.appendChild(option);
+            }
+        });
+    }
+
+    renderProductOptions();
+
+    // Auto-calculate total value
+    function calculateTotal() {
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+        if (selectedOption && selectedOption.dataset.price) {
+            const price = parseFloat(selectedOption.dataset.price);
+            const qty = parseInt(quantityInput.value) || 0;
+            valueInput.value = (price * qty).toFixed(2);
+        } else {
+            valueInput.value = '';
+        }
+    }
+
+    productSelect.addEventListener('change', calculateTotal);
+    quantityInput.addEventListener('input', calculateTotal);
+
+    // Handle form submission
+    document.getElementById('new-sale-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const clientId = document.getElementById('sale-client').value;
+        const productId = document.getElementById('sale-product').value;
+        const quantity = parseInt(document.getElementById('sale-quantity').value);
+        const value = parseFloat(document.getElementById('sale-value').value);
+        
+        // Find product and update stock
+        const productIndex = inventory.findIndex(p => p.id === productId);
+        if (productIndex !== -1 && inventory[productIndex].stock >= quantity) {
+            inventory[productIndex].stock -= quantity;
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            
+            // Add sale
+            const newSale = {
+                id: Date.now().toString(),
+                date: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }),
+                client: clientId,
+                productName: inventory[productIndex].name,
+                quantity: quantity,
+                value: value,
+                nfeStatus: 'Pendente'
+            };
+            
+            sales.unshift(newSale); // Add to beginning
+            localStorage.setItem('sales', JSON.stringify(sales));
+            
+            // Reset and close
+            this.reset();
+            renderProductOptions(); // Update stock display in dropdown
+            document.getElementById('sale-form-modal').classList.add('hidden');
+            
+            // Re-render
+            renderSales();
+        } else {
+            alert('Estoque insuficiente para esta venda.');
+        }
+    });
+
+    function emitNfe(saleId) {
+        const saleIndex = sales.findIndex(s => s.id === saleId);
+        if (saleIndex !== -1) {
+            sales[saleIndex].nfeStatus = 'Emitida';
+            localStorage.setItem('sales', JSON.stringify(sales));
+            renderSales();
+        }
+    }
+
+    function renderSales() {
+        const tbody = document.getElementById('sales-table-body');
+        const emptyState = document.getElementById('empty-state');
+        tbody.innerHTML = '';
+        
+        let totalValue = 0;
+        let pendingNfe = 0;
+        let emittedNfe = 0;
+
+        if (sales.length === 0) {
+            emptyState.classList.remove('hidden');
+        } else {
+            emptyState.classList.add('hidden');
+            
+            sales.forEach(sale => {
+                totalValue += sale.value;
+                if (sale.nfeStatus === 'Pendente') pendingNfe++;
+                if (sale.nfeStatus === 'Emitida') emittedNfe++;
+
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-outline-variant hover:bg-surface-container-lowest transition-colors';
+                
+                const nfeBadgeClass = sale.nfeStatus === 'Emitida' 
+                    ? 'bg-[#e3f2fd] text-[#1565c0]' 
+                    : 'bg-surface-container-high text-on-surface-variant';
+                
+                const actionButton = sale.nfeStatus === 'Pendente'
+                    ? `<button onclick="emitNfe('${sale.id}')" class="px-sm py-xs border border-primary text-primary rounded bg-surface hover:bg-surface-container-low transition-colors text-label-caps font-label-caps">Gerar NF-e</button>`
+                    : `<span class="text-secondary material-symbols-outlined">check</span>`;
+
+                tr.innerHTML = `
+                    <td class="px-md py-sm">${sale.date}</td>
+                    <td class="px-md py-sm">${sale.client}<br><span class="text-body-sm text-secondary">Ref: #${sale.id.slice(-4)}</span></td>
+                    <td class="px-md py-sm">${sale.productName}</td>
+                    <td class="px-md py-sm">${sale.quantity}</td>
+                    <td class="px-md py-sm">R$ ${sale.value.toFixed(2).replace('.', ',')}</td>
+                    <td class="px-md py-sm">
+                        <span class="px-sm py-xs ${nfeBadgeClass} rounded-full text-[10px] font-bold uppercase tracking-wider">${sale.nfeStatus}</span>
+                    </td>
+                    <td class="px-md py-sm text-right">
+                        ${actionButton}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Update summary cards
+        document.getElementById('total-sales-value').textContent = `R$ ${totalValue.toFixed(2).replace('.', ',')}`;
+        document.getElementById('pending-nfe-count').textContent = pendingNfe;
+        document.getElementById('emitted-nfe-count').textContent = emittedNfe;
+    }
+
+    // Initial render
+    renderSales();
+</script>
+</body></html>

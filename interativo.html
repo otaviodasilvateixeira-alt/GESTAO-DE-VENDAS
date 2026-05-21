@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ProLedger - Dashboard Principal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600&amp;family=Manrope:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#4c627e",
+                        "on-tertiary-container": "#2b83ff",
+                        "on-secondary-fixed": "#021d35",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#001a41",
+                        "primary-fixed-dim": "#afc8f0",
+                        "surface-container-high": "#dce9ff",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#d4e3ff",
+                        "tertiary-fixed": "#d8e2ff",
+                        "on-surface-variant": "#43474e",
+                        "tertiary": "#000515",
+                        "on-background": "#0b1c30",
+                        "background": "#f8f9ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#324863",
+                        "on-primary-fixed": "#001c3a",
+                        "tertiary-container": "#001d46",
+                        "on-primary-container": "#6f88ad",
+                        "inverse-surface": "#213145",
+                        "surface-variant": "#d3e4fe",
+                        "surface-dim": "#cbdbf5",
+                        "secondary-fixed-dim": "#b2c8e8",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#c8dfff",
+                        "surface-bright": "#f8f9ff",
+                        "on-surface": "#0b1c30",
+                        "secondary-fixed": "#d2e4ff",
+                        "primary": "#000613",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#004493",
+                        "secondary": "#4a607c",
+                        "surface": "#f8f9ff",
+                        "outline-variant": "#c4c6cf",
+                        "surface-container-highest": "#d3e4fe",
+                        "error": "#ba1a1a",
+                        "primary-container": "#001f3f",
+                        "surface-container": "#e5eeff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-primary-fixed-variant": "#2f486a",
+                        "on-primary": "#ffffff",
+                        "outline": "#74777f",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#eff4ff",
+                        "tertiary-fixed-dim": "#adc7ff",
+                        "surface-tint": "#476083",
+                        "inverse-primary": "#afc8f0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "sm": "12px",
+                        "xs": "4px",
+                        "md": "24px",
+                        "xl": "64px",
+                        "base": "8px",
+                        "lg": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Manrope"],
+                        "label-caps": ["IBM Plex Sans"],
+                        "body-sm": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "data-tabular": ["IBM Plex Sans"],
+                        "title-sm": ["Manrope"],
+                        "display-lg": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "data-tabular": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "title-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "display-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<aside class="bg-surface-container-low dark:bg-on-secondary-fixed text-primary dark:text-primary-fixed-dim docked left-0 h-screen w-64 border-r border-outline-variant dark:border-on-secondary-fixed-variant flat no shadows flex flex-col p-md gap-base hidden md:flex shrink-0">
+<!-- Header -->
+<div class="mb-lg">
+<div class="flex items-center gap-sm mb-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="Business Logo" class="w-full h-full object-cover" data-alt="A clean, minimalist logo featuring abstract geometric shapes in deep navy blue on a crisp white background, representing a modern corporate identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSjp7DrlU-CV0FinoFhzeMQF_tFTCH7X9sqzWL5MmHZ1dMmzeoLtI-8oeeT2flLU_pfyRbOn-B8Od4KS8morl886a-iD27BBj8u7r2_u5DuD9hpWqAwJJh2TAKo0fVN-nA96rx7FqORC1K14KFxqbHxKer69YLQH1NKvG8S94pquupMmzxrypMc1y32Xl-GtwMIlqBKz410UmgiTBYJHakXqEv51LykasxyvJVEu8CUCfAKx07SPAC6DVMmPj_Ezn9OJ8h_WPeQnE"/>
+</div>
+<div>
+<h2 class="text-headline-md font-headline-md text-primary dark:text-primary-fixed">Enterprise Hub</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Micro-Entrepreneur Portal</p>
+</div>
+</div>
+</div>
+<!-- Main Nav -->
+<nav class="flex-1 flex flex-col gap-xs">
+<a class="bg-secondary-container dark:bg-primary-container text-on-secondary-container dark:text-on-primary-container font-semibold rounded-lg flex items-center gap-sm p-sm opacity-90 transition-opacity duration-200 scale-95 transition-transform duration-150" href="index.html">
+<span class="material-symbols-outlined text-title-sm">dashboard</span>
+<span class="text-label-caps font-label-caps">Dashboard</span>
+</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-on-secondary-fixed-variant rounded-lg flex items-center gap-sm p-sm hover:bg-surface-container-highest" href="estoque.html">
+<span class="material-symbols-outlined text-title-sm">inventory_2</span>
+<span class="text-label-caps font-label-caps">Inventory</span>
+</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-on-secondary-fixed-variant rounded-lg flex items-center gap-sm p-sm hover:bg-surface-container-highest" href="vendas.html">
+<span class="material-symbols-outlined text-title-sm">receipt_long</span>
+<span class="text-label-caps font-label-caps">Sales / NF-e</span>
+</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-on-secondary-fixed-variant rounded-lg flex items-center gap-sm p-sm hover:bg-surface-container-highest" href="financeiro.html">
+<span class="material-symbols-outlined text-title-sm">analytics</span>
+<span class="text-label-caps font-label-caps">Reports</span>
+</a>
+</nav>
+<!-- Footer Nav -->
+<div class="mt-auto border-t border-outline-variant pt-base flex flex-col gap-xs">
+<a class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-on-secondary-fixed-variant rounded-lg flex items-center gap-sm p-sm hover:bg-surface-container-highest dark:hover:bg-on-secondary-fixed-variant" href="#">
+<span class="material-symbols-outlined text-title-sm">settings</span>
+<span class="text-label-caps font-label-caps">Settings</span>
+</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high dark:hover:bg-on-secondary-fixed-variant rounded-lg flex items-center gap-sm p-sm hover:bg-surface-container-highest dark:hover:bg-on-secondary-fixed-variant" href="#">
+<span class="material-symbols-outlined text-title-sm">help_outline</span>
+<span class="text-label-caps font-label-caps">Help</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col overflow-hidden">
+<!-- TopNavBar (Mobile mainly, or contextual on Web) -->
+<header class="bg-surface dark:bg-on-background border-b border-outline-variant dark:border-on-secondary-fixed-variant flat no shadows flex justify-between items-center w-full px-lg py-sm sticky top-0 z-40 md:hidden shrink-0">
+<div class="flex items-center gap-sm">
+<button class="text-on-surface-variant md:hidden">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-title-sm font-headline-md font-bold text-primary dark:text-primary-fixed">ProLedger</h1>
+</div>
+<div class="flex items-center gap-sm text-primary dark:text-primary-fixed">
+<button class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-on-secondary-fixed-variant transition-colors p-xs rounded-full">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-low dark:hover:bg-on-secondary-fixed-variant transition-colors p-xs rounded-full">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 overflow-y-auto p-md lg:p-lg bg-background">
+<div class="max-w-container-max mx-auto space-y-xl">
+<!-- Page Header -->
+<div>
+<h1 class="text-display-lg font-display-lg text-primary mb-xs">Visão Geral</h1>
+<p class="text-body-md font-body-md text-secondary">Acompanhe o desempenho do seu negócio hoje.</p>
+</div>
+<!-- Bento Grid: Summary Cards -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Card 1: Today's Sales -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-shadow">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-label-caps font-label-caps text-secondary uppercase">Vendas Hoje</span>
+<span class="material-symbols-outlined text-secondary bg-surface-container-low p-xs rounded">point_of_sale</span>
+</div>
+<div class="text-display-lg font-display-lg text-primary mb-xs" id="metric-sales-today">R$ 0,00</div>
+<div class="flex items-center gap-xs text-body-sm font-body-sm">
+<span class="text-outline">Calculado hoje</span>
+</div>
+</div>
+<!-- Card 2: Monthly Revenue -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-shadow">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-label-caps font-label-caps text-secondary uppercase">Faturamento Mês</span>
+<span class="material-symbols-outlined text-secondary bg-surface-container-low p-xs rounded">account_balance_wallet</span>
+</div>
+<div class="text-display-lg font-display-lg text-primary mb-xs" id="metric-monthly-revenue">R$ 0,00</div>
+<div class="flex items-center gap-xs text-body-sm font-body-sm">
+<span class="text-outline">Total do mês</span>
+</div>
+</div>
+<!-- Card 3: Profit -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-shadow relative overflow-hidden">
+<div class="flex justify-between items-start mb-sm relative z-10">
+<span class="text-label-caps font-label-caps text-secondary uppercase">Lucro</span>
+<span class="material-symbols-outlined text-secondary bg-surface-container-low p-xs rounded">savings</span>
+</div>
+<div class="text-display-lg font-display-lg text-primary mb-xs relative z-10" id="metric-profit">R$ 0,00</div>
+<div class="flex items-center gap-xs text-body-sm font-body-sm relative z-10">
+<span class="text-outline">Lucro estimado</span>
+</div>
+</div>
+<!-- Card 4: Low Stock Alerts -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-shadow">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-label-caps font-label-caps text-secondary uppercase">Alerta de Estoque</span>
+<span class="material-symbols-outlined text-[#f59e0b] bg-[#fef3c7] p-xs rounded">warning</span>
+</div>
+<div class="text-display-lg font-display-lg text-primary mb-xs" id="metric-alerts">0 <span class="text-title-sm text-secondary">itens</span></div>
+<div class="flex items-center gap-xs text-body-sm font-body-sm">
+<span class="text-outline">Abaixo de 5 un.</span>
+</div>
+</div>
+</section>
+<!-- Complex Layout: Chart & Transactions -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Sales Trend Chart (Mockup via CSS/HTML structure) -->
+<section class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm">
+<div class="p-md border-b border-outline-variant flex justify-between items-center">
+<h3 class="text-headline-md font-headline-md text-primary">Tendência de Vendas (Últimos 7 dias)</h3>
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<div class="p-md h-64 flex items-end justify-between gap-xs pt-12 relative">
+<!-- Y-Axis labels mock -->
+<div class="absolute left-md top-md bottom-md flex flex-col justify-between text-label-caps font-label-caps text-outline" id="y-axis-labels">
+<span class="">R$ 3k</span>
+<span class="">R$ 2k</span>
+<span class="">R$ 1k</span>
+<span class="">0</span>
+</div>
+<!-- Graph Bars Mock (Using heights for visual representation) -->
+<div class="w-full flex items-end justify-around pl-16 h-full border-b border-outline-variant/50 relative" id="sales-chart-container">
+<!-- Grid lines -->
+<div class="absolute w-full border-t border-outline-variant/30 top-0"></div>
+<div class="absolute w-full border-t border-outline-variant/30 top-1/3"></div>
+<div class="absolute w-full border-t border-outline-variant/30 top-2/3"></div>
+</div>
+</div>
+</section>
+<!-- Recent Transactions List -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm flex flex-col">
+<div class="p-md border-b border-outline-variant flex justify-between items-center">
+<h3 class="text-headline-md font-headline-md text-primary">Atividade Recente</h3>
+</div>
+<div class="flex-1 p-md overflow-y-auto">
+<ul class="space-y-sm" id="recent-activity-list">
+<!-- Dynamic content will be injected here -->
+<li class="p-sm text-center text-outline text-body-sm">Nenhuma atividade recente.</li>
+</ul>
+</div>
+<div class="p-sm border-t border-outline-variant text-center">
+<a class="text-label-caps font-label-caps text-primary hover:underline" href="vendas.html">Ver todas as transações</a>
+</div>
+</section>
+</div>
+</div>
+</main>
+</div>
+<script>
+    function updateDashboard() {
+        // Load data from shared storage keys
+        const inventory = JSON.parse(localStorage.getItem('proledger_inventory')) || [];
+        const sales = JSON.parse(localStorage.getItem('proledger_sales')) || [];
+
+        const formatCurrency = (value) => {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        };
+
+        const today = new Date();
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
+        
+        let salesToday = 0;
+        let monthlyRevenue = 0;
+        let profit = 0;
+
+        const parseDate = (dateStr) => {
+             if(!dateStr) return new Date(0);
+             if(dateStr.includes('/')) {
+                 const parts = dateStr.split('/');
+                 if(parts.length === 3) {
+                     return new Date(parts[2], parts[1] - 1, parts[0]);
+                 }
+             }
+             return new Date(dateStr);
+        };
+
+        const last7Days = [];
+        for(let i=6; i>=0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            last7Days.push({
+                dateObj: d,
+                dayName: d.toLocaleDateString('pt-BR', {weekday: 'short'}).replace('.', ''),
+                total: 0
+            });
+        }
+        
+        // Calculate metrics based on sales data
+        sales.forEach(sale => {
+            const saleValue = parseFloat(sale.value || 0);
+            const saleDate = parseDate(sale.date);
+            
+            // Faturamento Mês
+            if (saleDate.getMonth() === currentMonth && saleDate.getFullYear() === currentYear) {
+                monthlyRevenue += saleValue;
+            }
+            
+            // Vendas Hoje
+            if (saleDate.getDate() === today.getDate() && saleDate.getMonth() === today.getMonth() && saleDate.getFullYear() === today.getFullYear()) {
+                salesToday += saleValue;
+            }
+
+            // Lucro
+            const product = inventory.find(p => p.name === sale.productName || p.id === sale.productId);
+            let costPrice = 0;
+            if (product && product.cost) {
+                costPrice = parseFloat(product.cost);
+            }
+            const quantity = parseInt(sale.quantity || 1, 10);
+            profit += (saleValue - (costPrice * quantity));
+            
+            // Chart Data
+            last7Days.forEach(day => {
+                if (saleDate.getDate() === day.dateObj.getDate() && 
+                    saleDate.getMonth() === day.dateObj.getMonth() && 
+                    saleDate.getFullYear() === day.dateObj.getFullYear()) {
+                    day.total += saleValue;
+                }
+            });
+        });
+
+        // Calculate low stock alerts (< 5)
+        const lowStockCount = inventory.filter(item => parseInt(item.qty || 0, 10) < 5).length;
+
+        // Update the metric cards
+        document.getElementById('metric-sales-today').textContent = formatCurrency(salesToday);
+        document.getElementById('metric-monthly-revenue').textContent = formatCurrency(monthlyRevenue);
+        document.getElementById('metric-profit').textContent = formatCurrency(profit);
+        document.getElementById('metric-alerts').innerHTML = `${lowStockCount} <span class="text-title-sm text-secondary">itens</span>`;
+
+        // Update Chart
+        const chartContainer = document.getElementById('sales-chart-container');
+        if(chartContainer) {
+            const maxTotal = Math.max(...last7Days.map(d => d.total), 1);
+            
+            let chartHtml = `
+                <div class="absolute w-full border-t border-outline-variant/30 top-0"></div>
+                <div class="absolute w-full border-t border-outline-variant/30 top-1/3"></div>
+                <div class="absolute w-full border-t border-outline-variant/30 top-2/3"></div>
+            `;
+            
+            last7Days.forEach((day, index) => {
+                const heightPct = (day.total / maxTotal) * 100;
+                const isToday = index === 6;
+                const barColor = isToday ? 'bg-primary-container' : 'bg-primary-fixed-dim hover:bg-primary-container';
+                const textColor = isToday ? 'text-primary font-bold' : 'text-secondary';
+                
+                chartHtml += `
+                    <div class="flex flex-col items-center gap-sm z-10 w-1/8 group relative">
+                        <div class="absolute -top-8 bg-inverse-surface text-inverse-on-surface text-label-caps px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                            ${formatCurrency(day.total)}
+                        </div>
+                        <div class="w-full max-w-[32px] ${barColor} rounded-t transition-all duration-500 ease-out" style="height: ${heightPct}%"></div>
+                        <span class="text-label-caps font-label-caps ${textColor} capitalize">${day.dayName}</span>
+                    </div>
+                `;
+            });
+            chartContainer.innerHTML = chartHtml;
+            
+            const yLabels = document.getElementById('y-axis-labels');
+            if(yLabels) {
+                yLabels.innerHTML = `
+                    <span>${formatCurrency(maxTotal)}</span>
+                    <span>${formatCurrency(maxTotal * 0.66)}</span>
+                    <span>${formatCurrency(maxTotal * 0.33)}</span>
+                    <span>R$ 0,00</span>
+                `;
+            }
+        }
+
+        // Render the Recent Activity List
+        const activityList = document.getElementById('recent-activity-list');
+        activityList.innerHTML = '';
+
+        const sortedSales = [...sales].sort((a, b) => parseDate(b.date) - parseDate(a.date));
+        const recentSales = sortedSales.slice(0, 5); // Get top 5 recent sales
+
+        if (recentSales && recentSales.length > 0) {
+            recentSales.forEach(activity => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center justify-between p-sm hover:bg-surface-container-low rounded transition-colors group border border-transparent hover:border-outline-variant/50';
+                
+                let icon = 'shopping_bag';
+                let statusClass = 'bg-outline-variant/30 text-on-surface-variant';
+                
+                if (activity.nfeStatus === 'Emitida' || activity.status === 'Pago') {
+                    statusClass = 'bg-[#d1fae5] text-[#065f46]';
+                } else if (activity.nfeStatus === 'Pendente' || activity.status === 'Pendente') {
+                    statusClass = 'bg-[#dce9ff] text-[#004493]';
+                }
+
+                const amount = parseFloat(activity.value || 0);
+                if (amount < 0) {
+                    icon = 'assignment_return';
+                }
+
+                li.innerHTML = `
+                    <div class="flex items-center gap-sm">
+                        <div class="w-10 h-10 rounded bg-surface-container-highest flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined">${icon}</span>
+                        </div>
+                        <div>
+                            <p class="text-data-tabular font-data-tabular text-on-surface">${activity.productName || activity.title || 'Venda'}</p>
+                            <p class="text-label-caps font-label-caps text-outline">${activity.client || activity.subtitle || 'Detalhes indisponíveis'}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-data-tabular font-data-tabular ${amount < 0 ? 'text-error' : 'text-on-surface'}">${formatCurrency(amount)}</p>
+                        <span class="inline-block px-[12px] py-[4px] rounded text-label-caps font-label-caps ${statusClass}">${activity.nfeStatus || activity.status || 'Processado'}</span>
+                    </div>
+                `;
+                activityList.appendChild(li);
+            });
+        } else {
+            activityList.innerHTML = '<li class="p-sm text-center text-outline text-body-sm">Nenhuma atividade recente.</li>';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', updateDashboard);
+    window.addEventListener('storage', updateDashboard);
+</script>
+</body></html>
