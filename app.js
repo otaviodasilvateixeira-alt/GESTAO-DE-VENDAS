@@ -465,9 +465,7 @@
         ];
 
         return `
-            <div class="flex items-center gap-sm mb-lg">
-                <div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline-variant shrink-0"><img alt="Logo Informais Sistemas" class="w-full h-full object-cover" src="logo-informais.jpg"/></div><div class="min-w-0"><h2 class="text-title-sm font-headline-md font-bold text-primary truncate">informais</h2><p class="text-label-caps font-label-caps text-on-surface-variant truncate">Sistemas</p></div>
-            </div>
+            <div class="flex items-center mb-lg px-xs"><img alt="Logo Informais Sistemas" class="h-14 w-auto max-w-[180px] object-contain" src="logo-informais.jpg"/></div>
             <nav class="flex-1 flex flex-col gap-xs overflow-y-auto">
                 ${links.map(link => {
                     const active = link.key === activePage;
