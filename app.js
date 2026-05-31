@@ -466,13 +466,7 @@
 
         return `
             <div class="flex items-center gap-sm mb-lg">
-                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary shrink-0">
-                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">storefront</span>
-                </div>
-                <div class="min-w-0">
-                    <h2 class="text-title-sm font-headline-md font-bold text-primary truncate">ProLedger</h2>
-                    <p class="text-label-caps font-label-caps text-on-surface-variant truncate">Gestao para pequenos negocios</p>
-                </div>
+                <div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline-variant shrink-0"><img alt="Logo Informais Sistemas" class="w-full h-full object-cover" src="logo-informais.jpg"/></div><div class="min-w-0"><h2 class="text-title-sm font-headline-md font-bold text-primary truncate">informais</h2><p class="text-label-caps font-label-caps text-on-surface-variant truncate">Sistemas</p></div>
             </div>
             <nav class="flex-1 flex flex-col gap-xs overflow-y-auto">
                 ${links.map(link => {
@@ -534,7 +528,7 @@
                 <div class="absolute inset-0 bg-black/40" data-close-menu></div>
                 <div class="absolute left-0 top-0 bottom-0 w-72 bg-surface-container-low border-r border-outline-variant p-md flex flex-col gap-sm shadow-xl">
                     <div class="flex items-center justify-between mb-md">
-                        <strong class="text-title-sm text-primary">ProLedger</strong>
+                        <div class="flex items-center gap-sm min-w-0"><img alt="Logo Informais Sistemas" class="h-8 w-8 rounded-lg object-cover" src="logo-informais.jpg"/><strong class="text-title-sm text-primary truncate">informais</strong></div>
                         <button class="material-symbols-outlined text-secondary" data-close-menu>close</button>
                     </div>
                     <a class="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-high" href="index.html"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
