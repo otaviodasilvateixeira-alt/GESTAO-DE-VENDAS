@@ -465,7 +465,7 @@
         ];
 
         return `
-            <div class="flex items-center mb-lg px-xs"><img alt="Logo Informais Sistemas" class="h-14 w-auto max-w-[180px] object-contain" src="logo-informais.jpg"/></div>
+            <div class="flex items-center mb-lg px-xs"><img alt="Logo Informais Sistemas" class="h-14 w-auto max-w-[180px] object-contain" src="logotipo-informais.jpg.jpeg"/></div>
             <nav class="flex-1 flex flex-col gap-xs overflow-y-auto">
                 ${links.map(link => {
                     const active = link.key === activePage;
@@ -526,7 +526,7 @@
                 <div class="absolute inset-0 bg-black/40" data-close-menu></div>
                 <div class="absolute left-0 top-0 bottom-0 w-72 bg-surface-container-low border-r border-outline-variant p-md flex flex-col gap-sm shadow-xl">
                     <div class="flex items-center justify-between mb-md">
-                        <div class="flex items-center gap-sm min-w-0"><img alt="Logo Informais Sistemas" class="h-8 w-8 rounded-lg object-cover" src="logo-informais.jpg"/><strong class="text-title-sm text-primary truncate">informais</strong></div>
+                        <div class="flex items-center gap-sm min-w-0"><img alt="Logo Informais Sistemas" class="h-8 w-8 rounded-lg object-cover" src="logotipo-informais.jpg.jpeg"/><strong class="text-title-sm text-primary truncate">informais</strong></div>
                         <button class="material-symbols-outlined text-secondary" data-close-menu>close</button>
                     </div>
                     <a class="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-high" href="index.html"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
