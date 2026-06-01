@@ -277,6 +277,7 @@
 <th class="px-md py-sm font-normal">Produto</th>
 <th class="px-md py-sm font-normal">Qtd</th>
 <th class="px-md py-sm font-normal">Valor</th>
+<th class="px-md py-sm font-normal">Pagamento</th>
 <th class="px-md py-sm font-normal">Status NF-e</th>
 <th class="px-md py-sm font-normal text-right">Ação</th>
 </tr>
@@ -314,7 +315,7 @@
 </nav>
 <!-- Sale Form Modal -->
 <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden" id="sale-form-modal">
-<div class="bg-surface-container-lowest rounded-xl shadow-lg w-full max-w-md p-md flex flex-col gap-md">
+<div class="bg-surface-container-lowest rounded-xl shadow-lg w-full max-w-lg p-md flex flex-col gap-md">
 <div class="flex justify-between items-center border-b border-outline-variant pb-sm">
 <h2 class="font-headline-md text-primary">Registrar Nova Venda</h2>
 <button class="material-symbols-outlined text-secondary hover:text-primary" onclick="document.getElementById('sale-form-modal').classList.add('hidden')">close</button>
@@ -338,6 +339,49 @@
 <div>
 <label class="block font-label-caps text-secondary mb-xs">Valor Total (R$)</label>
 <input class="w-full px-sm py-xs border border-outline-variant rounded bg-surface focus:border-primary focus:ring-1 focus:ring-primary" id="sale-value" min="0.01" required="" step="0.01" type="number"/>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-sm">
+<div>
+<label class="block font-label-caps text-secondary mb-xs">Pagamento</label>
+<select class="w-full px-sm py-xs border border-outline-variant rounded bg-surface focus:border-primary focus:ring-1 focus:ring-primary" id="sale-payment-method">
+<option value="pix">Pix</option>
+<option value="dinheiro">Dinheiro</option>
+<option value="debito">Cartao de debito</option>
+<option value="credito">Cartao de credito</option>
+<option value="boleto">Boleto bancario</option>
+</select>
+</div>
+<div>
+<label class="block font-label-caps text-secondary mb-xs">Parcelas</label>
+<select class="w-full px-sm py-xs border border-outline-variant rounded bg-surface focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-50" disabled="" id="sale-installments">
+<option value="1">1x</option>
+<option value="2">2x</option>
+<option value="3">3x</option>
+<option value="4">4x</option>
+<option value="5">5x</option>
+<option value="6">6x</option>
+<option value="7">7x</option>
+<option value="8">8x</option>
+<option value="9">9x</option>
+<option value="10">10x</option>
+<option value="11">11x</option>
+<option value="12">12x</option>
+</select>
+</div>
+<div>
+<label class="block font-label-caps text-secondary mb-xs">Taxa (%)</label>
+<input class="w-full px-sm py-xs border border-outline-variant rounded bg-surface focus:border-primary focus:ring-1 focus:ring-primary" id="sale-fee-rate" min="0" step="0.01" type="number" value="0.00"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-sm bg-surface-container-low border border-outline-variant rounded-lg p-sm">
+<div>
+<span class="block font-label-caps text-label-caps text-secondary">Taxa maquininha</span>
+<strong class="font-data-tabular text-primary" id="sale-fee-amount">R$ 0,00</strong>
+</div>
+<div>
+<span class="block font-label-caps text-label-caps text-secondary">Valor liquido</span>
+<strong class="font-data-tabular text-primary" id="sale-net-total">R$ 0,00</strong>
 </div>
 </div>
 <div class="flex justify-end gap-sm mt-sm">

@@ -72,6 +72,36 @@
         return Number.isFinite(number) ? number : fallback;
     }
 
+    const paymentMethods = {
+        dinheiro: { label: 'Dinheiro', rate: 0 },
+        pix: { label: 'Pix', rate: 0 },
+        debito: { label: 'Cartao de debito', rate: 1.99 },
+        credito: { label: 'Cartao de credito', rate: 3.49 },
+        boleto: { label: 'Boleto bancario', rate: 0 }
+    };
+
+    function normalizePaymentMethod(value) {
+        const method = normalizeText(value || 'pix').toLowerCase();
+        return paymentMethods[method] ? method : 'pix';
+    }
+
+    function defaultCardRate(method, installments = 1) {
+        const normalized = normalizePaymentMethod(method);
+        const baseRate = paymentMethods[normalized].rate;
+        if (normalized !== 'credito') return baseRate;
+        return baseRate + Math.max(0, toNumber(installments, 1) - 1) * 0.5;
+    }
+
+    function calculatePaymentFee(total, feeRate) {
+        return Math.max(0, toNumber(total) * (Math.max(0, toNumber(feeRate)) / 100));
+    }
+
+    function paymentLabel(method, installments = 1) {
+        const normalized = normalizePaymentMethod(method);
+        const label = paymentMethods[normalized].label;
+        return normalized === 'credito' ? `${label} (${Math.max(1, Math.floor(toNumber(installments, 1)))}x)` : label;
+    }
+
     function normalizeText(value) {
         return String(value ?? '').trim();
     }
@@ -98,7 +128,13 @@
         const quantity = Math.max(1, Math.floor(toNumber(sale.quantity ?? sale.quantidade ?? sale.qty, 1)));
         const total = Math.max(0, toNumber(sale.total ?? sale.value ?? sale.amount ?? sale.valorTotal ?? sale.valor));
         const unitPrice = total > 0 ? total / quantity : toNumber(sale.unitPrice ?? sale.precoUnitario ?? product?.price);
+        const resolvedTotal = total || Math.max(0, unitPrice * quantity);
         const createdAt = parseDate(sale.createdAt || sale.dateISO || sale.dataISO || sale.date || sale.data) || new Date();
+        const paymentMethod = normalizePaymentMethod(sale.paymentMethod || sale.formaPagamento || sale.pagamento || sale.paymentType);
+        const installments = paymentMethod === 'credito' ? Math.max(1, Math.floor(toNumber(sale.installments || sale.parcelas, 1))) : 1;
+        const cardFeeRate = Math.max(0, toNumber(sale.cardFeeRate ?? sale.taxaMaquininha ?? sale.feeRate, defaultCardRate(paymentMethod, installments)));
+        const cardFeeAmount = Math.max(0, toNumber(sale.cardFeeAmount ?? sale.taxaValor ?? sale.feeAmount, calculatePaymentFee(resolvedTotal, cardFeeRate)));
+        const netTotal = Math.max(0, toNumber(sale.netTotal ?? sale.valorLiquido ?? sale.netAmount, resolvedTotal - cardFeeAmount));
 
         return {
             id: normalizeText(sale.id || sale.codigo || `s-${Date.now()}-${index}`),
@@ -107,11 +143,16 @@
             productName: normalizeText(sale.productName || sale.product || sale.produto || product?.name || 'Produto removido'),
             quantity,
             unitPrice: Math.max(0, unitPrice),
-            total: total || Math.max(0, unitPrice * quantity),
-            value: total || Math.max(0, unitPrice * quantity),
+            total: resolvedTotal,
+            value: resolvedTotal,
             costAtSale: toNumber(sale.costAtSale ?? sale.custoUnitario ?? product?.cost),
             nfeStatus: normalizeText(sale.nfeStatus || sale.statusNfe || sale.status || 'Pendente'),
             paymentStatus: normalizeText(sale.paymentStatus || sale.statusPagamento || 'A receber'),
+            paymentMethod,
+            installments,
+            cardFeeRate,
+            cardFeeAmount,
+            netTotal,
             createdAt: createdAt.toISOString(),
             date: createdAt.toLocaleDateString('pt-BR')
         };
@@ -263,6 +304,11 @@
             total: sale.total,
             nfeStatus: sale.nfeStatus,
             paymentStatus: sale.paymentStatus,
+            paymentMethod: sale.paymentMethod,
+            installments: sale.installments,
+            cardFeeRate: sale.cardFeeRate,
+            cardFeeAmount: sale.cardFeeAmount,
+            netTotal: sale.netTotal,
             costAtSale: sale.costAtSale
         }));
         localStorage.setItem('inventory', JSON.stringify(oldInventory));
@@ -308,7 +354,7 @@
     }
 
     function saleProfit(sale) {
-        return toNumber(sale.total) - (toNumber(sale.costAtSale) * toNumber(sale.quantity, 1));
+        return toNumber(sale.netTotal ?? sale.total) - (toNumber(sale.costAtSale) * toNumber(sale.quantity, 1));
     }
 
     function showToast(message) {
@@ -670,6 +716,11 @@
         const saleModal = document.getElementById('sale-form-modal');
         const quantityInput = document.getElementById('sale-quantity');
         const valueInput = document.getElementById('sale-value');
+        const paymentMethodInput = document.getElementById('sale-payment-method');
+        const installmentsInput = document.getElementById('sale-installments');
+        const feeRateInput = document.getElementById('sale-fee-rate');
+        const feeAmountPreview = document.getElementById('sale-fee-amount');
+        const netTotalPreview = document.getElementById('sale-net-total');
         const exportButton = Array.from(document.querySelectorAll('button')).find(button => button.textContent.includes('Exportar'));
         let query = '';
 
@@ -697,6 +748,28 @@
             } else {
                 valueInput.value = '';
             }
+            updatePaymentPreview();
+        }
+
+        function updatePaymentPreview(resetRate = false) {
+            const method = normalizePaymentMethod(paymentMethodInput?.value);
+            const installments = Math.max(1, Math.floor(toNumber(installmentsInput?.value, 1)));
+            const isCredit = method === 'credito';
+            if (installmentsInput) {
+                installmentsInput.disabled = !isCredit;
+                if (!isCredit) installmentsInput.value = '1';
+            }
+            if (feeRateInput && resetRate) {
+                feeRateInput.value = defaultCardRate(method, isCredit ? installments : 1).toFixed(2);
+            }
+
+            const total = toNumber(valueInput.value);
+            const rate = toNumber(feeRateInput?.value, defaultCardRate(method, installments));
+            const fee = calculatePaymentFee(total, rate);
+            const net = Math.max(0, total - fee);
+
+            if (feeAmountPreview) feeAmountPreview.textContent = formatCurrency(fee);
+            if (netTotalPreview) netTotalPreview.textContent = formatCurrency(net);
         }
 
         function openSaleModal() {
@@ -711,6 +784,10 @@
             saleModal?.classList.remove('flex');
             form.reset();
             valueInput.value = '';
+            if (paymentMethodInput) paymentMethodInput.value = 'pix';
+            if (installmentsInput) installmentsInput.value = '1';
+            if (feeRateInput) feeRateInput.value = '0.00';
+            updatePaymentPreview();
         }
 
         document.querySelectorAll('button').forEach(button => {
@@ -736,6 +813,10 @@
 
         productSelect.addEventListener('change', calculateTotal);
         quantityInput.addEventListener('input', calculateTotal);
+        valueInput.addEventListener('input', () => updatePaymentPreview());
+        paymentMethodInput?.addEventListener('change', () => updatePaymentPreview(true));
+        installmentsInput?.addEventListener('change', () => updatePaymentPreview(true));
+        feeRateInput?.addEventListener('input', () => updatePaymentPreview());
 
         form.addEventListener('submit', event => {
             event.preventDefault();
@@ -744,6 +825,8 @@
             const client = document.getElementById('sale-client').value.trim();
             const productId = productSelect.value;
             const quantity = Math.max(1, Math.floor(toNumber(quantityInput.value, 1)));
+            const paymentMethod = normalizePaymentMethod(paymentMethodInput?.value);
+            const installments = paymentMethod === 'credito' ? Math.max(1, Math.floor(toNumber(installmentsInput?.value, 1))) : 1;
 
             const data = getData();
             const product = data.inventory.find(item => String(item.id) === String(productId));
@@ -757,6 +840,9 @@
             }
 
             const total = toNumber(valueInput.value, product.price * quantity);
+            const cardFeeRate = Math.max(0, toNumber(feeRateInput?.value, defaultCardRate(paymentMethod, installments)));
+            const cardFeeAmount = calculatePaymentFee(total, cardFeeRate);
+            const netTotal = Math.max(0, total - cardFeeAmount);
             setData(current => {
                 const currentProduct = current.inventory.find(item => String(item.id) === String(productId));
                 currentProduct.qty = Math.max(0, currentProduct.qty - quantity);
@@ -772,6 +858,11 @@
                     costAtSale: currentProduct.cost,
                     nfeStatus: 'Pendente',
                     paymentStatus: 'A receber',
+                    paymentMethod,
+                    installments,
+                    cardFeeRate,
+                    cardFeeAmount,
+                    netTotal,
                     createdAt: new Date().toISOString(),
                     date: new Date().toLocaleDateString('pt-BR')
                 });
@@ -793,8 +884,8 @@
             event.preventDefault();
             const data = getData();
             downloadCSV('vendas-proledger.csv', [
-                ['Data', 'Cliente', 'Produto', 'Quantidade', 'Valor', 'NF-e', 'Pagamento'],
-                ...data.sales.map(sale => [formatDate(sale.createdAt), sale.client, sale.productName, sale.quantity, sale.total, sale.nfeStatus, sale.paymentStatus])
+                ['Data', 'Cliente', 'Produto', 'Quantidade', 'Valor bruto', 'Forma de pagamento', 'Taxa maquininha', 'Valor liquido', 'NF-e', 'Pagamento'],
+                ...data.sales.map(sale => [formatDate(sale.createdAt), sale.client, sale.productName, sale.quantity, sale.total, paymentLabel(sale.paymentMethod, sale.installments), sale.cardFeeAmount, sale.netTotal, sale.nfeStatus, sale.paymentStatus])
             ]);
             showToast('Relatorio de vendas exportado.');
         });
@@ -838,7 +929,7 @@
         function renderSales() {
             const data = getData();
             const visibleSales = data.sales.filter(sale => {
-                const haystack = `${sale.client} ${sale.productName} ${sale.nfeStatus} ${sale.paymentStatus} ${sale.id}`.toLowerCase();
+                const haystack = `${sale.client} ${sale.productName} ${sale.nfeStatus} ${sale.paymentStatus} ${paymentLabel(sale.paymentMethod, sale.installments)} ${sale.id}`.toLowerCase();
                 return !query || haystack.includes(query);
             });
             const empty = document.getElementById('empty-state');
@@ -850,6 +941,8 @@
                 empty?.classList.add('hidden');
                 tableBody.innerHTML = visibleSales.map(sale => {
                     const actionButtons = [];
+                    const feeAmount = toNumber(sale.cardFeeAmount);
+                    const netTotal = toNumber(sale.netTotal ?? sale.total);
                     if (sale.nfeStatus !== 'Emitida') {
                         actionButtons.push(`<button onclick="emitNfe('${escapeHTML(sale.id)}')" class="px-sm py-xs border border-primary text-primary rounded bg-surface hover:bg-surface-container-low transition-colors text-label-caps font-label-caps">Gerar NF-e</button>`);
                     }
@@ -864,7 +957,8 @@
                             <td class="px-md py-sm">${escapeHTML(sale.client)}<br><span class="text-body-sm text-secondary">Ref: #${escapeHTML(String(sale.id).slice(-4))}</span></td>
                             <td class="px-md py-sm">${escapeHTML(sale.productName)}</td>
                             <td class="px-md py-sm">${sale.quantity}</td>
-                            <td class="px-md py-sm whitespace-nowrap">${formatCurrency(sale.total)}</td>
+                            <td class="px-md py-sm whitespace-nowrap">${formatCurrency(sale.total)}<br><span class="text-[10px] text-secondary">Liquido: ${formatCurrency(netTotal)}</span></td>
+                            <td class="px-md py-sm whitespace-nowrap">${escapeHTML(paymentLabel(sale.paymentMethod, sale.installments))}<br><span class="text-[10px] text-secondary">Taxa: ${formatCurrency(feeAmount)} (${toNumber(sale.cardFeeRate).toFixed(2)}%)</span></td>
                             <td class="px-md py-sm">
                                 <span class="px-sm py-xs ${statusBadgeClasses(sale.nfeStatus)} rounded-full text-[10px] font-bold uppercase tracking-wider">${escapeHTML(sale.nfeStatus)}</span>
                                 <span class="block mt-xs text-[10px] text-secondary">${escapeHTML(sale.paymentStatus)}</span>
@@ -890,6 +984,7 @@
         }
 
         renderOptions();
+        updatePaymentPreview(true);
         renderSales();
         window.addEventListener('proledger:data-change', renderSales);
     }
@@ -1151,7 +1246,7 @@
                     id: `sale-${sale.id}`,
                     client: sale.client,
                     dueDate: sale.createdAt.slice(0, 10),
-                    amount: sale.total,
+                    amount: sale.netTotal ?? sale.total,
                     status: sale.paymentStatus || 'A receber'
                 }));
 
