@@ -1138,15 +1138,44 @@
             select.value = selectedValue;
         }
 
+        function fillFilterCategorySelect(categories, selectedValue = '') {
+            if (!categorySelect) return;
+            fillCategorySelect(categorySelect, categories, 'Todas as Categorias', selectedValue);
+            const createOption = document.createElement('option');
+            createOption.value = '__create_category__';
+            createOption.textContent = '+ Criar nova categoria';
+            categorySelect.appendChild(createOption);
+        }
+
         function renderCategoryControls() {
             const data = getData();
             const currentFilter = filters.category;
             const currentProductCategory = productCategorySelect?.value || '';
             const currentManagerCategory = categoryManagerSelect?.value || '';
 
-            fillCategorySelect(categorySelect, data.categories, 'Todas as Categorias', currentFilter);
+            fillFilterCategorySelect(data.categories, currentFilter);
             fillCategorySelect(productCategorySelect, data.categories, 'Selecione...', currentProductCategory);
             fillCategorySelect(categoryManagerSelect, data.categories, 'Selecione uma categoria', currentManagerCategory);
+        }
+
+        function createCategoryFromName(name) {
+            const normalizedName = normalizeText(name);
+            if (!normalizedName) {
+                alert('Informe o nome da categoria.');
+                return false;
+            }
+
+            const data = getData();
+            if (categoryExists(normalizedName, data.categories)) {
+                alert('Erro: esta categoria ja existe.');
+                return false;
+            }
+
+            setData(current => {
+                current.categories = [...asArray(current.categories), normalizedName];
+                return current;
+            });
+            return normalizedName;
         }
 
         function categoryExists(name, categories = getData().categories) {
@@ -1238,6 +1267,14 @@
         });
 
         categorySelect?.addEventListener('change', event => {
+            if (event.target.value === '__create_category__') {
+                const created = createCategoryFromName(prompt('Digite o nome da nova categoria:'));
+                filters.category = created || '';
+                renderCategoryControls();
+                renderInventory();
+                if (created) showToast('Categoria adicionada.');
+                return;
+            }
             filters.category = event.target.value;
             renderInventory();
         });
@@ -1248,22 +1285,8 @@
 
         addCategoryButton?.addEventListener('click', event => {
             event.preventDefault();
-            const name = normalizeText(categoryManagerName?.value);
-            if (!name) {
-                alert('Informe o nome da categoria.');
-                return;
-            }
-
-            const data = getData();
-            if (categoryExists(name, data.categories)) {
-                alert('Erro: esta categoria ja existe.');
-                return;
-            }
-
-            setData(current => {
-                current.categories = [...asArray(current.categories), name];
-                return current;
-            });
+            const created = createCategoryFromName(categoryManagerName?.value);
+            if (!created) return;
             if (categoryManagerName) categoryManagerName.value = '';
             renderCategoryControls();
             renderInventory();
