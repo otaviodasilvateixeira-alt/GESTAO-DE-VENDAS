@@ -476,7 +476,7 @@
     function standardizeAppShell() {
         const page = getCurrentPageKey();
         const pageMeta = {
-            dashboard: { label: 'Dashboard', icon: 'dashboard', search: 'Buscar no dashboard...' },
+            dashboard: { label: 'Pagina Inicial', icon: 'home', search: 'Buscar na pagina inicial...' },
             estoque: { label: 'Estoque', icon: 'inventory_2', search: 'Buscar produtos, SKUs...' },
             vendas: { label: 'Vendas / NF-e', icon: 'receipt_long', search: 'Buscar vendas...' },
             financeiro: { label: 'Relatorios', icon: 'analytics', search: 'Buscar no financeiro...' }
@@ -485,7 +485,7 @@
         const sidebars = Array.from(document.querySelectorAll('aside, nav')).filter(element => {
             const text = element.textContent || '';
             const classes = element.className || '';
-            return text.includes('Dashboard') &&
+            return (text.includes('Dashboard') || text.includes('Pagina Inicial')) &&
                 (text.includes('Inventory') || text.includes('Estoque')) &&
                 !classes.includes('md:hidden') &&
                 !classes.includes('fixed bottom-0');
@@ -504,7 +504,7 @@
 
     function buildSidebarHTML(activePage) {
         const links = [
-            { key: 'dashboard', href: 'index.html', icon: 'dashboard', label: 'Dashboard' },
+            { key: 'dashboard', href: 'index.html', icon: 'home', label: 'Pagina Inicial' },
             { key: 'estoque', href: 'estoque.html', icon: 'inventory_2', label: 'Estoque' },
             { key: 'vendas', href: 'vendas.html', icon: 'receipt_long', label: 'Vendas / NF-e' },
             { key: 'financeiro', href: 'financeiro.html', icon: 'analytics', label: 'Relatorios' }
@@ -575,7 +575,7 @@
                         <div class="flex items-center gap-sm min-w-0"><img alt="Logo Informais Sistemas" class="h-8 w-8 rounded-lg object-cover" src="logotipo-informais.jpg.jpeg"/><strong class="text-title-sm text-primary truncate">informais</strong></div>
                         <button class="material-symbols-outlined text-secondary" data-close-menu>close</button>
                     </div>
-                    <a class="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-high" href="index.html"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
+                    <a class="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-high" href="index.html"><span class="material-symbols-outlined">home</span>Pagina Inicial</a>
                     <a class="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-high" href="estoque.html"><span class="material-symbols-outlined">inventory_2</span>Estoque</a>
                     <a class="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-high" href="vendas.html"><span class="material-symbols-outlined">receipt_long</span>Vendas</a>
                     <a class="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-high" href="financeiro.html"><span class="material-symbols-outlined">analytics</span>Relatorios</a>
@@ -591,6 +591,53 @@
 
     function initDashboardPage() {
         if (!document.getElementById('metric-sales-today')) return;
+
+        const searchInput = document.querySelector('input[placeholder*="pagina inicial"]');
+        let dashboardQuery = '';
+        let dashboardSearchItems = [];
+        let dashboardEmptyState = null;
+
+        function setupDashboardSearch() {
+            const main = document.querySelector('main');
+            if (!main || !searchInput) return;
+
+            const metricCards = [
+                document.getElementById('metric-sales-today')?.closest('.rounded-lg'),
+                document.getElementById('metric-monthly-revenue')?.closest('.rounded-lg'),
+                document.getElementById('metric-profit')?.closest('.rounded-lg'),
+                document.getElementById('metric-alerts')?.closest('.rounded-lg')
+            ].filter(Boolean);
+
+            const chartSection = document.getElementById('sales-chart-container')?.closest('section');
+            const activitySection = document.getElementById('recent-activity-list')?.closest('section');
+            dashboardSearchItems = [...metricCards, chartSection, activitySection].filter(Boolean);
+
+            if (!dashboardEmptyState) {
+                dashboardEmptyState = document.createElement('p');
+                dashboardEmptyState.className = 'hidden text-body-md text-secondary text-center bg-surface-container-lowest border border-outline-variant rounded-lg p-lg';
+                dashboardEmptyState.textContent = 'Nenhum resultado encontrado na pagina inicial.';
+                main.querySelector('.max-w-container-max')?.appendChild(dashboardEmptyState);
+            }
+
+            searchInput.addEventListener('input', event => {
+                dashboardQuery = event.target.value.trim().toLowerCase();
+                applyDashboardSearch();
+            });
+        }
+
+        function applyDashboardSearch() {
+            if (!dashboardSearchItems.length) return;
+
+            let visibleCount = 0;
+            dashboardSearchItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                const isVisible = !dashboardQuery || text.includes(dashboardQuery);
+                item.classList.toggle('hidden', !isVisible);
+                if (isVisible) visibleCount += 1;
+            });
+
+            dashboardEmptyState?.classList.toggle('hidden', !dashboardQuery || visibleCount > 0);
+        }
 
         function renderDashboard() {
             const data = getData();
@@ -633,8 +680,10 @@
 
             renderDashboardChart(last7Days);
             renderRecentActivity(data.sales);
+            applyDashboardSearch();
         }
 
+        setupDashboardSearch();
         renderDashboard();
         window.addEventListener('proledger:data-change', renderDashboard);
         window.addEventListener('storage', event => {
