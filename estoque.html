@@ -228,6 +228,35 @@
                     Limpar Filtros
                 </button>
 </div>
+<!-- Categories Manager -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md shadow-sm">
+<div class="flex flex-col lg:flex-row lg:items-end gap-md">
+<div class="flex-1 min-w-[220px]">
+<label class="block text-label-caps font-label-caps text-on-surface-variant mb-xs">Gerenciar Categorias</label>
+<select class="w-full bg-surface border border-outline-variant text-on-surface text-body-sm rounded-lg px-sm py-xs focus:border-primary-container focus:ring-1 focus:ring-primary-container shadow-sm" id="category-manager-select">
+<option value="">Selecione uma categoria</option>
+</select>
+</div>
+<div class="flex-1 min-w-[220px]">
+<label class="block text-label-caps font-label-caps text-on-surface-variant mb-xs">Nome da Categoria</label>
+<input class="w-full bg-surface border border-outline-variant text-on-surface text-body-sm rounded-lg px-sm py-xs focus:border-primary-container focus:ring-1 focus:ring-primary-container shadow-sm" id="category-manager-name" placeholder="Digite a categoria" type="text"/>
+</div>
+<div class="flex flex-wrap gap-sm">
+<button class="bg-primary-container text-on-primary px-md py-xs rounded-lg hover:opacity-90 transition-opacity font-body-md font-semibold flex items-center gap-xs" id="add-category-btn" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+Adicionar
+</button>
+<button class="border border-outline-variant text-secondary px-md py-xs rounded-lg hover:bg-surface-container-low transition-colors font-body-md font-semibold flex items-center gap-xs" id="rename-category-btn" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+Renomear
+</button>
+<button class="border border-error text-error px-md py-xs rounded-lg hover:bg-error-container transition-colors font-body-md font-semibold flex items-center gap-xs" id="delete-category-btn" type="button">
+<span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+Remover
+</button>
+</div>
+</div>
+</section>
 <!-- Data Table Card -->
 <div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm mt-md">
 <div class="overflow-x-auto">

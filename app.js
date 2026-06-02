@@ -9,6 +9,7 @@
             { id: 'p-3', name: 'Teclado Mecanico Keychron K8', sku: 'SKU-ACE-089', category: 'Acessorios', qty: 5, cost: 350, price: 680, icon: 'keyboard' },
             { id: 'p-4', name: 'Mesa com Regulagem de Altura', sku: 'SKU-OFF-012', category: 'Moveis de Escritorio', qty: 12, cost: 900, price: 1950, icon: 'desk' }
         ],
+        categories: ['Moveis de Escritorio', 'Eletronicos', 'Acessorios', 'Suprimentos'],
         sales: [],
         finance: {
             receivables: [],
@@ -121,6 +122,20 @@
         };
     }
 
+    function normalizeCategories(categories, inventory = []) {
+        const names = [
+            ...asArray(categories).map(normalizeText),
+            ...asArray(inventory).map(product => normalizeText(product.category))
+        ].filter(Boolean);
+        const seen = new Set();
+        return names.filter(name => {
+            const key = name.toLowerCase();
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+    }
+
     function normalizeSale(sale, index, inventory) {
         const productId = normalizeText(sale.productId || sale.produtoId || sale.product_id || sale.idProduto || sale.itemId);
         const product = inventory.find(item => String(item.id) === String(productId)) ||
@@ -222,6 +237,7 @@
         const stored = readJSON(STORAGE_KEY, null);
         const data = stored ? {
             inventory: Array.isArray(stored.inventory) ? stored.inventory : [],
+            categories: Array.isArray(stored.categories) ? stored.categories : [],
             sales: Array.isArray(stored.sales) ? stored.sales : [],
             finance: stored.finance || {}
         } : clone(defaultData);
@@ -247,6 +263,7 @@
         }
 
         data.inventory = dedupeById(data.inventory.map(normalizeProduct));
+        data.categories = normalizeCategories(data.categories, data.inventory);
         data.sales = dedupeById(data.sales.map((sale, index) => normalizeSale(sale, index, data.inventory)));
         data.finance = {
             receivables: [
@@ -270,6 +287,7 @@
         const current = getData();
         const next = typeof updater === 'function' ? updater(current) : updater;
         next.inventory = dedupeById(asArray(next.inventory).map(normalizeProduct));
+        next.categories = normalizeCategories(next.categories, next.inventory);
         next.sales = dedupeById(asArray(next.sales).map((sale, index) => normalizeSale(sale, index, next.inventory)));
         next.finance = next.finance || {};
         next.finance.receivables = dedupeById(asArray(next.finance.receivables).map(normalizeReceivable));
@@ -1052,6 +1070,12 @@
         const toggleBtn = document.getElementById('toggle-add-form-btn');
         const cancelBtn = document.getElementById('cancel-add-btn');
         const closeModalBtn = document.getElementById('close-modal-btn');
+        const productCategorySelect = document.getElementById('prod-category');
+        const categoryManagerSelect = document.getElementById('category-manager-select');
+        const categoryManagerName = document.getElementById('category-manager-name');
+        const addCategoryButton = document.getElementById('add-category-btn');
+        const renameCategoryButton = document.getElementById('rename-category-btn');
+        const deleteCategoryButton = document.getElementById('delete-category-btn');
         const modalTitle = modal?.querySelector('h2');
         const submitButton = form.querySelector('button[type="submit"]');
         let filters = { search: '', category: '', stock: '' };
@@ -1068,9 +1092,8 @@
             if (product) {
                 document.getElementById('prod-name').value = product.name;
                 document.getElementById('prod-sku').value = product.sku;
-                const categoryField = document.getElementById('prod-category');
-                ensureCategoryOption(categoryField, product.category);
-                categoryField.value = product.category;
+                ensureCategoryOption(productCategorySelect, product.category);
+                productCategorySelect.value = product.category;
                 document.getElementById('prod-qty').value = product.qty;
                 document.getElementById('prod-cost').value = product.cost;
                 document.getElementById('prod-price').value = product.price;
@@ -1103,6 +1126,46 @@
             }
         }
 
+        function fillCategorySelect(select, categories, placeholder, selectedValue = '') {
+            if (!select) return;
+            select.innerHTML = `<option value="">${placeholder}</option>`;
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                select.appendChild(option);
+            });
+            select.value = selectedValue;
+        }
+
+        function renderCategoryControls() {
+            const data = getData();
+            const currentFilter = filters.category;
+            const currentProductCategory = productCategorySelect?.value || '';
+            const currentManagerCategory = categoryManagerSelect?.value || '';
+
+            fillCategorySelect(categorySelect, data.categories, 'Todas as Categorias', currentFilter);
+            fillCategorySelect(productCategorySelect, data.categories, 'Selecione...', currentProductCategory);
+            fillCategorySelect(categoryManagerSelect, data.categories, 'Selecione uma categoria', currentManagerCategory);
+        }
+
+        function categoryExists(name, categories = getData().categories) {
+            return categories.some(category => category.toLowerCase() === name.toLowerCase());
+        }
+
+        function normalizeFieldValue(id) {
+            return normalizeText(document.getElementById(id)?.value);
+        }
+
+        function findDuplicateProduct(products, payload, ignoredId = null) {
+            const nextName = payload.name.toLowerCase();
+            const nextSku = payload.sku.toLowerCase();
+            return products.find(product => {
+                if (ignoredId && String(product.id) === String(ignoredId)) return false;
+                return product.name.toLowerCase() === nextName || product.sku.toLowerCase() === nextSku;
+            });
+        }
+
         toggleBtn?.addEventListener('click', event => {
             event.preventDefault();
             event.stopImmediatePropagation();
@@ -1125,18 +1188,30 @@
             event.preventDefault();
             event.stopImmediatePropagation();
             const isEditing = Boolean(editingProductId);
+            const data = getData();
+
+            const productPayload = {
+                name: normalizeFieldValue('prod-name'),
+                sku: normalizeFieldValue('prod-sku'),
+                category: productCategorySelect?.value || '',
+                qty: Math.max(0, Math.floor(toNumber(document.getElementById('prod-qty').value))),
+                cost: Math.max(0, toNumber(document.getElementById('prod-cost').value)),
+                price: Math.max(0, toNumber(document.getElementById('prod-price').value)),
+                icon: 'inventory_2'
+            };
+
+            if (!productPayload.category || !categoryExists(productPayload.category, data.categories)) {
+                alert('Erro: selecione uma categoria cadastrada para este produto.');
+                return;
+            }
+
+            const duplicate = findDuplicateProduct(data.inventory, productPayload, editingProductId);
+            if (duplicate) {
+                alert(`Erro: este produto ja existe no estoque (${duplicate.name} / ${duplicate.sku}).`);
+                return;
+            }
 
             setData(current => {
-                const productPayload = {
-                    name: document.getElementById('prod-name').value.trim(),
-                    sku: document.getElementById('prod-sku').value.trim(),
-                    category: document.getElementById('prod-category').value,
-                    qty: Math.max(0, Math.floor(toNumber(document.getElementById('prod-qty').value))),
-                    cost: Math.max(0, toNumber(document.getElementById('prod-cost').value)),
-                    price: Math.max(0, toNumber(document.getElementById('prod-price').value)),
-                    icon: 'inventory_2'
-                };
-
                 if (editingProductId) {
                     const product = current.inventory.find(item => String(item.id) === editingProductId);
                     if (product) {
@@ -1152,6 +1227,7 @@
             });
 
             closeModal();
+            renderCategoryControls();
             renderInventory();
             showToast(isEditing ? 'Produto atualizado.' : 'Produto salvo no estoque.');
         }, true);
@@ -1164,6 +1240,92 @@
         categorySelect?.addEventListener('change', event => {
             filters.category = event.target.value;
             renderInventory();
+        });
+
+        categoryManagerSelect?.addEventListener('change', event => {
+            if (categoryManagerName) categoryManagerName.value = event.target.value;
+        });
+
+        addCategoryButton?.addEventListener('click', event => {
+            event.preventDefault();
+            const name = normalizeText(categoryManagerName?.value);
+            if (!name) {
+                alert('Informe o nome da categoria.');
+                return;
+            }
+
+            const data = getData();
+            if (categoryExists(name, data.categories)) {
+                alert('Erro: esta categoria ja existe.');
+                return;
+            }
+
+            setData(current => {
+                current.categories = [...asArray(current.categories), name];
+                return current;
+            });
+            if (categoryManagerName) categoryManagerName.value = '';
+            renderCategoryControls();
+            renderInventory();
+            showToast('Categoria adicionada.');
+        });
+
+        renameCategoryButton?.addEventListener('click', event => {
+            event.preventDefault();
+            const oldName = categoryManagerSelect?.value || '';
+            const newName = normalizeText(categoryManagerName?.value);
+            if (!oldName) {
+                alert('Selecione uma categoria para renomear.');
+                return;
+            }
+            if (!newName) {
+                alert('Informe o novo nome da categoria.');
+                return;
+            }
+
+            const data = getData();
+            if (oldName.toLowerCase() !== newName.toLowerCase() && categoryExists(newName, data.categories)) {
+                alert('Erro: ja existe uma categoria com esse nome.');
+                return;
+            }
+
+            setData(current => {
+                current.categories = asArray(current.categories).map(category => category === oldName ? newName : category);
+                current.inventory = current.inventory.map(product => product.category === oldName ? { ...product, category: newName } : product);
+                return current;
+            });
+            filters.category = filters.category === oldName ? newName : filters.category;
+            if (categoryManagerName) categoryManagerName.value = newName;
+            renderCategoryControls();
+            renderInventory();
+            showToast('Categoria renomeada.');
+        });
+
+        deleteCategoryButton?.addEventListener('click', event => {
+            event.preventDefault();
+            const category = categoryManagerSelect?.value || '';
+            if (!category) {
+                alert('Selecione uma categoria para remover.');
+                return;
+            }
+
+            const data = getData();
+            const inUse = data.inventory.some(product => product.category === category);
+            if (inUse) {
+                alert('Erro: esta categoria esta sendo usada por produtos. Renomeie ou edite esses produtos antes de remover.');
+                return;
+            }
+            if (!confirm(`Remover a categoria "${category}"?`)) return;
+
+            setData(current => {
+                current.categories = asArray(current.categories).filter(item => item !== category);
+                return current;
+            });
+            filters.category = filters.category === category ? '' : filters.category;
+            if (categoryManagerName) categoryManagerName.value = '';
+            renderCategoryControls();
+            renderInventory();
+            showToast('Categoria removida.');
         });
 
         stockSelect?.addEventListener('change', event => {
@@ -1211,8 +1373,7 @@
         function filteredInventory() {
             return getData().inventory.filter(product => {
                 const status = getStockStatus(product);
-                const categoryValue = categorySelect?.selectedOptions[0]?.textContent || '';
-                const categoryMatches = !filters.category || filters.category === '' || product.category === categoryValue || product.category.toLowerCase().includes(filters.category.toLowerCase());
+                const categoryMatches = !filters.category || product.category === filters.category;
                 const stockMatches = !filters.stock || status.key === filters.stock;
                 const searchMatches = !filters.search || `${product.name} ${product.sku} ${product.category}`.toLowerCase().includes(filters.search);
                 return categoryMatches && stockMatches && searchMatches;
@@ -1260,8 +1421,12 @@
             if (pagination) pagination.textContent = `Exibindo ${products.length} de ${getData().inventory.length} produtos`;
         }
 
+        renderCategoryControls();
         renderInventory();
-        window.addEventListener('proledger:data-change', renderInventory);
+        window.addEventListener('proledger:data-change', () => {
+            renderCategoryControls();
+            renderInventory();
+        });
     }
 
     function initFinancePage() {
