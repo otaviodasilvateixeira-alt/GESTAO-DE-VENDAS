@@ -582,9 +582,7 @@
             if (icon === 'notifications') {
                 button.addEventListener('click', () => showToast('Sem novas notificacoes por enquanto.'));
             }
-            if (icon === 'account_circle') {
-                button.addEventListener('click', () => showToast('Perfil local do empreendedor.'));
-            }
+            // account_circle é gerenciado pelo auth.js (dropdown de perfil)
             if (icon === 'more_horiz') {
                 button.addEventListener('click', () => showToast('Grafico atualizado com as vendas salvas.'));
             }
