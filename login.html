@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Informais - Entrar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "on-secondary-container": "#4c627e",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#afc8f0",
+                    "surface-container-high": "#dce9ff",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#43474e",
+                    "on-background": "#0b1c30",
+                    "background": "#f8f9ff",
+                    "on-secondary-fixed-variant": "#324863",
+                    "on-primary-container": "#6f88ad",
+                    "inverse-surface": "#213145",
+                    "surface-variant": "#d3e4fe",
+                    "secondary-fixed-dim": "#b2c8e8",
+                    "on-error-container": "#93000a",
+                    "secondary-container": "#c8dfff",
+                    "on-surface": "#0b1c30",
+                    "primary": "#000613",
+                    "error-container": "#ffdad6",
+                    "secondary": "#4a607c",
+                    "surface": "#f8f9ff",
+                    "outline-variant": "#c4c6cf",
+                    "surface-container-highest": "#d3e4fe",
+                    "error": "#ba1a1a",
+                    "primary-container": "#001f3f",
+                    "surface-container": "#e5eeff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary": "#ffffff",
+                    "outline": "#74777f",
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#eff4ff",
+                    "inverse-primary": "#afc8f0"
+                },
+                borderRadius: {
+                    "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"
+                },
+                spacing: {
+                    "container-max": "1280px", "gutter": "24px", "sm": "12px",
+                    "xs": "4px", "md": "24px", "xl": "64px", "base": "8px", "lg": "40px"
+                },
+                fontFamily: {
+                    "headline-md": ["Manrope"], "label-caps": ["IBM Plex Sans"],
+                    "body-sm": ["Manrope"], "body-md": ["Manrope"],
+                    "data-tabular": ["IBM Plex Sans"], "title-sm": ["Manrope"], "display-lg": ["Manrope"]
+                },
+                fontSize: {
+                    "headline-md": ["24px", {"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],
+                    "label-caps": ["12px", {"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"600"}],
+                    "body-sm": ["14px", {"lineHeight":"20px","fontWeight":"400"}],
+                    "body-md": ["16px", {"lineHeight":"24px","fontWeight":"400"}],
+                    "title-sm": ["18px", {"lineHeight":"24px","fontWeight":"600"}],
+                    "display-lg": ["32px", {"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"700"}]
+                }
+            }
+        }
+    }
+</script>
+<style>
+    .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined';
+        font-weight: normal; font-style: normal; font-size: 24px;
+        line-height: 1; letter-spacing: normal; text-transform: none;
+        display: inline-block; white-space: nowrap;
+        direction: ltr; -webkit-font-smoothing: antialiased;
+    }
+    .input-field {
+        width: 100%;
+        background: #f8f9ff;
+        border: 1px solid #c4c6cf;
+        color: #0b1c30;
+        border-radius: 0.5rem;
+        padding: 10px 14px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .input-field:focus {
+        border-color: #001f3f;
+        box-shadow: 0 0 0 3px rgba(0,31,63,0.1);
+    }
+    .input-field.error {
+        border-color: #ba1a1a;
+        box-shadow: 0 0 0 3px rgba(186,26,26,0.1);
+    }
+    @keyframes shake {
+        0%,100% { transform: translateX(0); }
+        20%,60% { transform: translateX(-6px); }
+        40%,80% { transform: translateX(6px); }
+    }
+    .shake { animation: shake 0.4s ease; }
+    @keyframes fadein {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .fadein { animation: fadein 0.35s ease both; }
+</style>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center p-md font-body-md">
+
+<div class="w-full max-w-sm fadein">
+
+    <!-- Logo -->
+    <div class="flex flex-col items-center mb-lg">
+        <img src="logotipo-informais.jpg.jpeg" alt="Informais" class="h-16 w-auto object-contain mb-sm"/>
+        <h1 class="text-display-lg font-display-lg text-primary">Informais</h1>
+        <p class="text-body-sm text-secondary mt-xs">Gestão de Vendas</p>
+    </div>
+
+    <!-- Card -->
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+
+        <!-- Tabs: Entrar / Criar conta -->
+        <div class="flex border-b border-outline-variant">
+            <button
+                id="tab-login"
+                class="flex-1 py-sm text-label-caps font-label-caps uppercase transition-colors border-b-2 border-primary-container text-primary bg-surface-container-low"
+                onclick="switchTab('login')"
+            >Entrar</button>
+            <button
+                id="tab-register"
+                class="flex-1 py-sm text-label-caps font-label-caps uppercase transition-colors border-b-2 border-transparent text-secondary hover:text-primary"
+                onclick="switchTab('register')"
+            >Criar conta</button>
+        </div>
+
+        <!-- Formulário LOGIN -->
+        <form id="form-login" class="p-md flex flex-col gap-md" novalidate>
+            <div class="flex flex-col gap-xs">
+                <label class="text-label-caps font-label-caps text-on-surface-variant uppercase" for="login-user">Usuário</label>
+                <div class="relative flex items-center">
+                    <span class="material-symbols-outlined absolute left-sm text-outline" style="font-size:18px">person</span>
+                    <input id="login-user" type="text" class="input-field pl-9" placeholder="Seu nome de usuário" autocomplete="username"/>
+                </div>
+            </div>
+            <div class="flex flex-col gap-xs">
+                <label class="text-label-caps font-label-caps text-on-surface-variant uppercase" for="login-pass">Senha</label>
+                <div class="relative flex items-center">
+                    <span class="material-symbols-outlined absolute left-sm text-outline" style="font-size:18px">lock</span>
+                    <input id="login-pass" type="password" class="input-field pl-9 pr-9" placeholder="Sua senha" autocomplete="current-password"/>
+                    <button type="button" class="absolute right-sm text-outline hover:text-primary transition-colors" onclick="togglePassword('login-pass', this)" tabindex="-1">
+                        <span class="material-symbols-outlined" style="font-size:18px">visibility</span>
+                    </button>
+                </div>
+            </div>
+            <div id="login-error" class="hidden flex items-center gap-xs text-body-sm text-error bg-error-container rounded-lg px-sm py-xs">
+                <span class="material-symbols-outlined" style="font-size:16px">error</span>
+                <span id="login-error-msg">Usuário ou senha incorretos.</span>
+            </div>
+            <button type="submit" id="btn-login"
+                class="w-full flex items-center justify-center gap-sm bg-primary-container text-on-primary py-sm rounded-lg font-body-md font-semibold hover:opacity-90 transition-opacity shadow-sm">
+                <span class="material-symbols-outlined" style="font-size:18px">login</span>
+                Entrar
+            </button>
+        </form>
+
+        <!-- Formulário CADASTRO -->
+        <form id="form-register" class="hidden p-md flex flex-col gap-md" novalidate>
+            <div class="flex flex-col gap-xs">
+                <label class="text-label-caps font-label-caps text-on-surface-variant uppercase" for="reg-name">Nome completo</label>
+                <div class="relative flex items-center">
+                    <span class="material-symbols-outlined absolute left-sm text-outline" style="font-size:18px">badge</span>
+                    <input id="reg-name" type="text" class="input-field pl-9" placeholder="Como quer ser chamado" autocomplete="name"/>
+                </div>
+            </div>
+            <div class="flex flex-col gap-xs">
+                <label class="text-label-caps font-label-caps text-on-surface-variant uppercase" for="reg-user">Usuário</label>
+                <div class="relative flex items-center">
+                    <span class="material-symbols-outlined absolute left-sm text-outline" style="font-size:18px">person</span>
+                    <input id="reg-user" type="text" class="input-field pl-9" placeholder="Crie um nome de usuário" autocomplete="username"/>
+                </div>
+                <span class="text-body-sm text-outline">Somente letras, números e _ (sem espaços)</span>
+            </div>
+            <div class="flex flex-col gap-xs">
+                <label class="text-label-caps font-label-caps text-on-surface-variant uppercase" for="reg-pass">Senha</label>
+                <div class="relative flex items-center">
+                    <span class="material-symbols-outlined absolute left-sm text-outline" style="font-size:18px">lock</span>
+                    <input id="reg-pass" type="password" class="input-field pl-9 pr-9" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/>
+                    <button type="button" class="absolute right-sm text-outline hover:text-primary transition-colors" onclick="togglePassword('reg-pass', this)" tabindex="-1">
+                        <span class="material-symbols-outlined" style="font-size:18px">visibility</span>
+                    </button>
+                </div>
+            </div>
+            <div class="flex flex-col gap-xs">
+                <label class="text-label-caps font-label-caps text-on-surface-variant uppercase" for="reg-pass2">Confirmar senha</label>
+                <div class="relative flex items-center">
+                    <span class="material-symbols-outlined absolute left-sm text-outline" style="font-size:18px">lock_reset</span>
+                    <input id="reg-pass2" type="password" class="input-field pl-9" placeholder="Repita a senha" autocomplete="new-password"/>
+                </div>
+            </div>
+            <div id="reg-error" class="hidden flex items-center gap-xs text-body-sm text-error bg-error-container rounded-lg px-sm py-xs">
+                <span class="material-symbols-outlined" style="font-size:16px">error</span>
+                <span id="reg-error-msg">Erro ao criar conta.</span>
+            </div>
+            <button type="submit" id="btn-register"
+                class="w-full flex items-center justify-center gap-sm bg-primary-container text-on-primary py-sm rounded-lg font-body-md font-semibold hover:opacity-90 transition-opacity shadow-sm">
+                <span class="material-symbols-outlined" style="font-size:18px">person_add</span>
+                Criar conta
+            </button>
+        </form>
+
+    </div>
+
+    <p class="text-center text-body-sm text-outline mt-md">
+        Os dados ficam salvos localmente neste dispositivo.
+    </p>
+</div>
+
+<script>
+(function () {
+    const USERS_KEY   = 'informais_users';
+    const SESSION_KEY = 'informais_session';
+    const DATA_PREFIX = 'informais_data_';
+
+    // Se já estiver logado, redireciona direto
+    if (sessionStorage.getItem(SESSION_KEY)) {
+        window.location.replace('index.html');
+    }
+
+    /* ── Helpers ── */
+    function getUsers() {
+        try { return JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); } catch { return {}; }
+    }
+    function saveUsers(users) {
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+
+    // Hash simples (djb2) — suficiente para armazenamento local
+    function hashPassword(str) {
+        let hash = 5381;
+        for (let i = 0; i < str.length; i++) {
+            hash = ((hash << 5) + hash) ^ str.charCodeAt(i);
+        }
+        return (hash >>> 0).toString(16);
+    }
+
+    function sanitizeUsername(value) {
+        return value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+    }
+
+    /* ── Tab switch ── */
+    window.switchTab = function (tab) {
+        const isLogin = tab === 'login';
+        document.getElementById('form-login').classList.toggle('hidden', !isLogin);
+        document.getElementById('form-register').classList.toggle('hidden', isLogin);
+        document.getElementById('tab-login').className = isLogin
+            ? 'flex-1 py-sm text-label-caps font-label-caps uppercase transition-colors border-b-2 border-primary-container text-primary bg-surface-container-low'
+            : 'flex-1 py-sm text-label-caps font-label-caps uppercase transition-colors border-b-2 border-transparent text-secondary hover:text-primary';
+        document.getElementById('tab-register').className = isLogin
+            ? 'flex-1 py-sm text-label-caps font-label-caps uppercase transition-colors border-b-2 border-transparent text-secondary hover:text-primary'
+            : 'flex-1 py-sm text-label-caps font-label-caps uppercase transition-colors border-b-2 border-primary-container text-primary bg-surface-container-low';
+        clearErrors();
+    };
+
+    /* ── Toggle senha visível ── */
+    window.togglePassword = function (fieldId, btn) {
+        const input = document.getElementById(fieldId);
+        const icon  = btn.querySelector('.material-symbols-outlined');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.textContent = 'visibility_off';
+        } else {
+            input.type = 'password';
+            icon.textContent = 'visibility';
+        }
+    };
+
+    function clearErrors() {
+        ['login-error', 'reg-error'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        document.querySelectorAll('.input-field').forEach(el => el.classList.remove('error'));
+    }
+
+    function showError(formPrefix, msg) {
+        const box = document.getElementById(`${formPrefix}-error`);
+        document.getElementById(`${formPrefix}-error-msg`).textContent = msg;
+        box.classList.remove('hidden');
+        const form = document.getElementById(`form-${formPrefix}`);
+        form.classList.add('shake');
+        form.addEventListener('animationend', () => form.classList.remove('shake'), { once: true });
+    }
+
+    function setLoading(btnId, loading) {
+        const btn = document.getElementById(btnId);
+        btn.disabled = loading;
+        btn.style.opacity = loading ? '0.6' : '';
+        btn.style.cursor  = loading ? 'wait' : '';
+    }
+
+    /* ── LOGIN ── */
+    document.getElementById('form-login').addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearErrors();
+
+        const username = sanitizeUsername(document.getElementById('login-user').value);
+        const password = document.getElementById('login-pass').value;
+
+        if (!username || !password) {
+            showError('login', 'Preencha usuário e senha.');
+            return;
+        }
+
+        setLoading('btn-login', true);
+
+        setTimeout(() => {
+            const users = getUsers();
+            const user  = users[username];
+
+            if (!user || user.passwordHash !== hashPassword(password)) {
+                setLoading('btn-login', false);
+                document.getElementById('login-user').classList.add('error');
+                document.getElementById('login-pass').classList.add('error');
+                showError('login', 'Usuário ou senha incorretos.');
+                return;
+            }
+
+            // Salva sessão e carrega dados do usuário
+            sessionStorage.setItem(SESSION_KEY, JSON.stringify({
+                username,
+                name: user.name,
+                loginAt: new Date().toISOString()
+            }));
+
+            // Migra dados globais para conta do usuário (primeira vez)
+            const userDataKey = DATA_PREFIX + username;
+            if (!localStorage.getItem(userDataKey)) {
+                const globalData = localStorage.getItem('proledger_app_data');
+                if (globalData) {
+                    localStorage.setItem(userDataKey, globalData);
+                }
+            }
+
+            // Ativa dados do usuário como dados ativos
+            const userData = localStorage.getItem(userDataKey);
+            if (userData) {
+                localStorage.setItem('proledger_app_data', userData);
+            }
+
+            window.location.replace('index.html');
+        }, 400);
+    });
+
+    /* ── CADASTRO ── */
+    document.getElementById('form-register').addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearErrors();
+
+        const name     = document.getElementById('reg-name').value.trim();
+        const username = sanitizeUsername(document.getElementById('reg-user').value);
+        const password = document.getElementById('reg-pass').value;
+        const password2 = document.getElementById('reg-pass2').value;
+
+        if (!name) {
+            document.getElementById('reg-name').classList.add('error');
+            showError('reg', 'Informe seu nome.');
+            return;
+        }
+        if (!username || username.length < 3) {
+            document.getElementById('reg-user').classList.add('error');
+            showError('reg', 'Usuário deve ter ao menos 3 caracteres (letras, números e _).');
+            return;
+        }
+        if (password.length < 6) {
+            document.getElementById('reg-pass').classList.add('error');
+            showError('reg', 'A senha deve ter no mínimo 6 caracteres.');
+            return;
+        }
+        if (password !== password2) {
+            document.getElementById('reg-pass2').classList.add('error');
+            showError('reg', 'As senhas não coincidem.');
+            return;
+        }
+
+        setLoading('btn-register', true);
+
+        setTimeout(() => {
+            const users = getUsers();
+
+            if (users[username]) {
+                setLoading('btn-register', false);
+                document.getElementById('reg-user').classList.add('error');
+                showError('reg', 'Este nome de usuário já está em uso.');
+                return;
+            }
+
+            users[username] = {
+                name,
+                username,
+                passwordHash: hashPassword(password),
+                createdAt: new Date().toISOString()
+            };
+            saveUsers(users);
+
+            // Inicia sessão
+            sessionStorage.setItem(SESSION_KEY, JSON.stringify({
+                username,
+                name,
+                loginAt: new Date().toISOString()
+            }));
+
+            window.location.replace('index.html');
+        }, 400);
+    });
+
+    // Foca no campo usuário ao carregar
+    document.getElementById('login-user').focus();
+})();
+</script>
+</body>
+</html>
