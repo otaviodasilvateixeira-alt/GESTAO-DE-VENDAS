@@ -17,6 +17,9 @@
                 { id: 'pay-1', supplier: 'Aluguel comercial', dueDate: nextDateISO(3), amount: 1500, status: 'Agendado' },
                 { id: 'pay-2', supplier: 'Internet e sistemas', dueDate: nextDateISO(6), amount: 180, status: 'Pendente' }
             ]
+        },
+        settings: {
+            lowStockLimit: LOW_STOCK_LIMIT
         }
     };
 
@@ -105,6 +108,17 @@
 
     function normalizeText(value) {
         return String(value ?? '').trim();
+    }
+
+    function normalizeSettings(settings = {}) {
+        const source = settings || {};
+        return {
+            lowStockLimit: Math.max(0, Math.floor(toNumber(source.lowStockLimit, LOW_STOCK_LIMIT)))
+        };
+    }
+
+    function getSettings(data = null) {
+        return normalizeSettings(data ? data.settings : getData().settings);
     }
 
     function normalizeProduct(product, index) {
@@ -239,7 +253,8 @@
             inventory: Array.isArray(stored.inventory) ? stored.inventory : [],
             categories: Array.isArray(stored.categories) ? stored.categories : [],
             sales: Array.isArray(stored.sales) ? stored.sales : [],
-            finance: stored.finance || {}
+            finance: stored.finance || {},
+            settings: stored.settings || {}
         } : clone(defaultData);
 
         const legacyInventory = [
@@ -277,6 +292,7 @@
         };
         data.finance.receivables = dedupeById(data.finance.receivables);
         data.finance.payables = dedupeById(data.finance.payables);
+        data.settings = normalizeSettings(data.settings);
 
         writeData(data);
         mirrorLegacyKeys(data);
@@ -292,6 +308,7 @@
         next.finance = next.finance || {};
         next.finance.receivables = dedupeById(asArray(next.finance.receivables).map(normalizeReceivable));
         next.finance.payables = dedupeById(asArray(next.finance.payables).map(normalizePayable));
+        next.settings = normalizeSettings(next.settings);
         writeData(next);
         mirrorLegacyKeys(next);
         window.dispatchEvent(new CustomEvent('proledger:data-change', { detail: next }));
@@ -375,6 +392,13 @@
         return toNumber(sale.netTotal ?? sale.total) - (toNumber(sale.costAtSale) * toNumber(sale.quantity, 1));
     }
 
+    function setSettings(settings) {
+        setData(current => {
+            current.settings = normalizeSettings({ ...getSettings(current), ...settings });
+            return current;
+        });
+    }
+
     function showToast(message) {
         let toast = document.getElementById('proledger-toast');
         if (!toast) {
@@ -389,6 +413,88 @@
         showToast.timer = setTimeout(() => {
             toast.classList.add('opacity-0', 'translate-y-2');
         }, 2600);
+    }
+
+    function ensureSettingsModal() {
+        let modal = document.getElementById('settings-modal');
+        if (modal) return modal;
+
+        modal = document.createElement('div');
+        modal.id = 'settings-modal';
+        modal.className = 'hidden fixed inset-0 z-[75] bg-[#00000080] items-center justify-center p-md';
+        modal.innerHTML = `
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl w-full max-w-lg overflow-hidden">
+                <div class="flex items-center justify-between p-md border-b border-outline-variant">
+                    <div class="flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-primary">settings</span>
+                        <h2 class="text-title-sm font-headline-md text-on-surface m-0">Configuracoes</h2>
+                    </div>
+                    <button class="text-on-surface-variant hover:text-error transition-colors flex items-center justify-center rounded-full hover:bg-surface-container-low p-xs" type="button" data-close-settings aria-label="Fechar configuracoes">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <form class="p-md flex flex-col gap-md" id="settings-form">
+                    <div>
+                        <label class="block text-label-caps font-label-caps text-on-surface-variant mb-xs" for="settings-low-stock-limit">Limite de estoque baixo</label>
+                        <div class="flex items-center gap-sm">
+                            <button class="material-symbols-outlined border border-outline-variant text-secondary p-xs rounded-lg hover:bg-surface-container-low transition-colors" type="button" data-step-settings="-1" title="Diminuir limite">remove</button>
+                            <input class="w-28 bg-surface border border-outline-variant text-on-surface text-body-sm rounded-lg px-sm py-xs text-center focus:border-primary-container focus:ring-1 focus:ring-primary-container shadow-sm" id="settings-low-stock-limit" min="0" type="number" required />
+                            <button class="material-symbols-outlined border border-outline-variant text-secondary p-xs rounded-lg hover:bg-surface-container-low transition-colors" type="button" data-step-settings="1" title="Aumentar limite">add</button>
+                            <span class="text-body-sm text-on-surface-variant">unidades</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-sm pt-md border-t border-outline-variant">
+                        <button class="px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-body-md font-semibold" type="button" data-close-settings>Cancelar</button>
+                        <button class="bg-primary-container text-on-primary px-md py-sm rounded-lg hover:opacity-90 transition-opacity font-body-md font-semibold shadow-sm" type="submit">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        const form = modal.querySelector('#settings-form');
+        const limitInput = modal.querySelector('#settings-low-stock-limit');
+
+        modal.querySelectorAll('[data-close-settings]').forEach(button => {
+            button.addEventListener('click', closeSettingsModal);
+        });
+
+        modal.querySelectorAll('[data-step-settings]').forEach(button => {
+            button.addEventListener('click', () => {
+                const delta = toNumber(button.dataset.stepSettings);
+                limitInput.value = Math.max(0, Math.floor(toNumber(limitInput.value) + delta));
+            });
+        });
+
+        modal.addEventListener('click', event => {
+            if (event.target === modal) closeSettingsModal();
+        });
+
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+            setSettings({ lowStockLimit: limitInput.value });
+            closeSettingsModal();
+            showToast('Configuracoes salvas.');
+        });
+
+        return modal;
+    }
+
+    function openSettingsModal() {
+        const modal = ensureSettingsModal();
+        const settings = getSettings();
+        const limitInput = modal.querySelector('#settings-low-stock-limit');
+        if (limitInput) limitInput.value = settings.lowStockLimit;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => limitInput?.focus(), 0);
+    }
+
+    function closeSettingsModal() {
+        const modal = document.getElementById('settings-modal');
+        modal?.classList.add('hidden');
+        modal?.classList.remove('flex');
     }
 
     function downloadCSV(filename, rows) {
@@ -416,9 +522,9 @@
         return 'bg-surface-container-high text-on-surface-variant';
     }
 
-    function getStockStatus(product) {
+    function getStockStatus(product, settings = getSettings()) {
         if (product.qty <= 0) return { text: 'Esgotado', className: 'bg-error-container text-on-error-container', key: 'out_of_stock' };
-        if (product.qty <= LOW_STOCK_LIMIT) return { text: 'Estoque baixo', className: 'bg-[#fff3e0] text-[#e65100]', key: 'low_stock' };
+        if (product.qty <= settings.lowStockLimit) return { text: 'Estoque baixo', className: 'bg-[#fff3e0] text-[#e65100]', key: 'low_stock' };
         return { text: 'Em estoque', className: 'bg-surface-variant text-on-surface', key: 'in_stock' };
     }
 
@@ -456,6 +562,14 @@
     }
 
     function bindCommonUI() {
+        document.addEventListener('click', event => {
+            const settingsLink = event.target.closest('[data-open-settings], a[href="#settings"]');
+            if (!settingsLink) return;
+            event.preventDefault();
+            settingsLink.closest('#proledger-mobile-drawer')?.classList.add('hidden');
+            openSettingsModal();
+        });
+
         document.querySelectorAll('a[href="#"]').forEach(link => {
             link.addEventListener('click', event => {
                 event.preventDefault();
@@ -542,7 +656,7 @@
                 }).join('')}
             </nav>
             <div class="flex flex-col gap-xs mt-auto border-t border-outline-variant pt-md">
-                <a class="flex items-center gap-sm p-sm rounded-lg text-secondary hover:bg-surface-container-highest transition-colors" href="#">
+                <a class="flex items-center gap-sm p-sm rounded-lg text-secondary hover:bg-surface-container-highest transition-colors" href="#settings" data-open-settings>
                     <span class="material-symbols-outlined">settings</span>
                     <span class="font-label-caps text-label-caps">Configuracoes</span>
                 </a>
@@ -597,6 +711,7 @@
                     <a class="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-high" href="estoque.html"><span class="material-symbols-outlined">inventory_2</span>Estoque</a>
                     <a class="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-high" href="vendas.html"><span class="material-symbols-outlined">receipt_long</span>Vendas</a>
                     <a class="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-high" href="financeiro.html"><span class="material-symbols-outlined">analytics</span>Relatorios</a>
+                    <a class="flex items-center gap-sm p-sm rounded-lg hover:bg-surface-container-high" href="#settings" data-open-settings><span class="material-symbols-outlined">settings</span>Configuracoes</a>
                 </div>
             `;
             document.body.appendChild(drawer);
@@ -692,9 +807,12 @@
             setText('metric-sales-today', formatCurrency(metrics.today));
             setText('metric-monthly-revenue', formatCurrency(metrics.month));
             setText('metric-profit', formatCurrency(metrics.profit));
-            const lowStock = data.inventory.filter(item => item.qty <= LOW_STOCK_LIMIT).length;
+            const settings = getSettings(data);
+            const lowStock = data.inventory.filter(item => item.qty <= settings.lowStockLimit).length;
             const alerts = document.getElementById('metric-alerts');
             if (alerts) alerts.innerHTML = `${lowStock} <span class="text-title-sm text-secondary">itens</span>`;
+            const alertsLabel = alerts?.closest('.rounded-lg')?.querySelector('.text-outline');
+            if (alertsLabel) alertsLabel.textContent = `Ate ${settings.lowStockLimit} un.`;
 
             renderDashboardChart(last7Days);
             renderRecentActivity(data.sales);
@@ -1393,9 +1511,9 @@
             openProductModal(product);
         };
 
-        function filteredInventory() {
-            return getData().inventory.filter(product => {
-                const status = getStockStatus(product);
+        function filteredInventory(data = getData(), settings = getSettings(data)) {
+            return data.inventory.filter(product => {
+                const status = getStockStatus(product, settings);
                 const categoryMatches = !filters.category || product.category === filters.category;
                 const stockMatches = !filters.stock || status.key === filters.stock;
                 const searchMatches = !filters.search || `${product.name} ${product.sku} ${product.category}`.toLowerCase().includes(filters.search);
@@ -1404,12 +1522,14 @@
         }
 
         function renderInventory() {
-            const products = filteredInventory();
+            const data = getData();
+            const settings = getSettings(data);
+            const products = filteredInventory(data, settings);
             if (!products.length) {
                 tableBody.innerHTML = '<tr><td colspan="7" class="px-md py-lg text-center text-on-surface-variant font-body-md">Nenhum produto encontrado</td></tr>';
             } else {
                 tableBody.innerHTML = products.map(product => {
-                    const status = getStockStatus(product);
+                    const status = getStockStatus(product, settings);
                     return `
                         <tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
                             <td class="px-md py-sm">
@@ -1441,7 +1561,7 @@
             }
 
             const pagination = document.getElementById('pagination-text');
-            if (pagination) pagination.textContent = `Exibindo ${products.length} de ${getData().inventory.length} produtos`;
+            if (pagination) pagination.textContent = `Exibindo ${products.length} de ${data.inventory.length} produtos`;
         }
 
         renderCategoryControls();
