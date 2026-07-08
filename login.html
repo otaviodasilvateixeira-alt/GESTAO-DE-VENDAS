@@ -107,6 +107,10 @@
         to   { opacity: 1; transform: translateY(0); }
     }
     .fadein { animation: fadein 0.35s ease both; }
+    @keyframes panelSlideIn {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
 </style>
 </head>
 <body class="bg-background min-h-screen flex items-center justify-center p-md font-body-md">
@@ -217,6 +221,106 @@
     <p class="text-center text-body-sm text-outline mt-md">
         Os dados ficam salvos localmente neste dispositivo.
     </p>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     PAINEL DE PRODUTOS (aparece após login bem-sucedido)
+     ════════════════════════════════════════════════════ -->
+<div id="products-panel"
+     class="hidden fixed inset-0 z-50 flex flex-col bg-background"
+     style="animation: none;">
+
+    <!-- Topbar -->
+    <header class="flex items-center gap-sm px-md py-sm bg-surface-container-lowest border-b border-outline-variant shadow-sm shrink-0">
+        <span class="material-symbols-outlined text-primary" style="font-size:22px">inventory_2</span>
+        <h2 class="text-title-sm font-headline-md text-on-surface flex-1">Gerenciar Produtos</h2>
+        <span id="panel-username" class="text-body-sm text-secondary mr-sm"></span>
+        <button id="btn-go-app"
+            class="flex items-center gap-xs bg-primary-container text-on-primary px-sm py-xs rounded-lg text-body-sm font-semibold hover:opacity-90 transition-opacity">
+            <span class="material-symbols-outlined" style="font-size:16px">dashboard</span>
+            Ir para o sistema
+        </button>
+        <button id="btn-logout-panel"
+            class="flex items-center gap-xs text-error hover:bg-error-container px-sm py-xs rounded-lg text-body-sm font-semibold transition-colors ml-xs">
+            <span class="material-symbols-outlined" style="font-size:16px">logout</span>
+            Sair
+        </button>
+    </header>
+
+    <!-- Conteúdo -->
+    <div class="flex-1 overflow-y-auto p-md flex flex-col gap-md max-w-2xl w-full mx-auto">
+
+        <!-- Formulário adicionar / editar -->
+        <div id="product-form-card" class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col gap-md shadow-sm">
+            <h3 id="form-card-title" class="text-body-md font-semibold text-on-surface flex items-center gap-xs">
+                <span class="material-symbols-outlined text-secondary" style="font-size:18px">add_box</span>
+                Adicionar produto
+            </h3>
+
+            <div class="flex flex-col gap-sm">
+                <div class="flex flex-col gap-xs">
+                    <label class="text-label-caps font-label-caps text-on-surface-variant uppercase" for="prod-name">Nome do produto</label>
+                    <input id="prod-name" type="text" class="input-field" placeholder="Ex: Camiseta M" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-sm">
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-label-caps font-label-caps text-on-surface-variant uppercase" for="prod-price">Preço (R$)</label>
+                        <input id="prod-price" type="number" min="0" step="0.01" class="input-field" placeholder="0,00" />
+                    </div>
+                    <div class="flex flex-col gap-xs">
+                        <label class="text-label-caps font-label-caps text-on-surface-variant uppercase" for="prod-stock">Estoque</label>
+                        <input id="prod-stock" type="number" min="0" step="1" class="input-field" placeholder="0" />
+                    </div>
+                </div>
+
+                <div id="prod-form-error" class="hidden flex items-center gap-xs text-body-sm text-error bg-error-container rounded-lg px-sm py-xs">
+                    <span class="material-symbols-outlined" style="font-size:16px">error</span>
+                    <span id="prod-form-error-msg">Preencha todos os campos.</span>
+                </div>
+
+                <div class="flex gap-sm">
+                    <button id="btn-save-product"
+                        class="flex-1 flex items-center justify-center gap-xs bg-primary-container text-on-primary py-sm rounded-lg font-semibold text-body-sm hover:opacity-90 transition-opacity">
+                        <span class="material-symbols-outlined" style="font-size:16px">save</span>
+                        <span id="btn-save-label">Salvar produto</span>
+                    </button>
+                    <button id="btn-cancel-edit"
+                        class="hidden flex items-center justify-center gap-xs border border-outline-variant text-secondary px-md py-sm rounded-lg text-body-sm hover:bg-surface-container-high transition-colors">
+                        <span class="material-symbols-outlined" style="font-size:16px">close</span>
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de produtos -->
+        <div class="flex flex-col gap-xs">
+            <div class="flex items-center justify-between">
+                <h3 class="text-body-md font-semibold text-on-surface flex items-center gap-xs">
+                    <span class="material-symbols-outlined text-secondary" style="font-size:18px">list</span>
+                    Produtos cadastrados
+                </h3>
+                <span id="prod-count" class="text-label-caps font-label-caps text-outline uppercase">0 itens</span>
+            </div>
+
+            <!-- Busca -->
+            <div class="relative flex items-center mb-xs">
+                <span class="material-symbols-outlined absolute left-sm text-outline" style="font-size:16px">search</span>
+                <input id="prod-search" type="text" class="input-field pl-9" placeholder="Buscar produto..." />
+            </div>
+
+            <div id="prod-list" class="flex flex-col gap-xs">
+                <!-- Itens gerados dinamicamente -->
+            </div>
+
+            <div id="prod-empty"
+                 class="hidden flex flex-col items-center justify-center py-lg text-secondary gap-xs">
+                <span class="material-symbols-outlined" style="font-size:40px;opacity:.4">inventory_2</span>
+                <p class="text-body-sm text-outline">Nenhum produto cadastrado ainda.</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -348,9 +452,277 @@
                 localStorage.setItem('proledger_app_data', userData);
             }
 
-            window.location.replace('index.html');
+            // Abre o painel de produtos em vez de redirecionar direto
+            openProductsPanel(username, user.name || username);
         }, 400);
     });
+
+    /* ══════════════════════════════════════════════════
+       PAINEL DE GERENCIAMENTO DE PRODUTOS
+       ══════════════════════════════════════════════════ */
+
+    const PRODUCTS_KEY = 'informais_products';
+    let editingProductId = null;
+
+    function getProducts() {
+        try { return JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'); } catch { return []; }
+    }
+
+    function saveProducts(list) {
+        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(list));
+    }
+
+    function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    }
+
+    function formatPrice(value) {
+        return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function openProductsPanel(username, displayName) {
+        // Esconde o formulário de login
+        document.querySelector('.fadein').style.display = 'none';
+
+        // Exibe o painel
+        const panel = document.getElementById('products-panel');
+        panel.classList.remove('hidden');
+        panel.style.animation = 'panelSlideIn 0.35s ease both';
+
+        // Nome do usuário logado
+        document.getElementById('panel-username').textContent = displayName;
+
+        renderProducts();
+
+        // Botão "Ir para o sistema"
+        document.getElementById('btn-go-app').addEventListener('click', () => {
+            window.location.replace('index.html');
+        });
+
+        // Botão sair
+        document.getElementById('btn-logout-panel').addEventListener('click', () => {
+            sessionStorage.removeItem(SESSION_KEY);
+            window.location.reload();
+        });
+
+        // Busca em tempo real
+        document.getElementById('prod-search').addEventListener('input', renderProducts);
+
+        // Formulário de produto
+        document.getElementById('btn-save-product').addEventListener('click', handleSaveProduct);
+
+        // Cancelar edição
+        document.getElementById('btn-cancel-edit').addEventListener('click', resetProductForm);
+
+        // Enter nos campos salva o produto
+        ['prod-name', 'prod-price', 'prod-stock'].forEach(id => {
+            document.getElementById(id).addEventListener('keydown', e => {
+                if (e.key === 'Enter') { e.preventDefault(); handleSaveProduct(); }
+            });
+        });
+    }
+
+    function handleSaveProduct() {
+        const name  = document.getElementById('prod-name').value.trim();
+        const price = parseFloat(document.getElementById('prod-price').value);
+        const stock = parseInt(document.getElementById('prod-stock').value, 10);
+        const errEl = document.getElementById('prod-form-error');
+
+        errEl.classList.add('hidden');
+
+        if (!name) {
+            document.getElementById('prod-form-error-msg').textContent = 'Informe o nome do produto.';
+            errEl.classList.remove('hidden');
+            document.getElementById('prod-name').focus();
+            return;
+        }
+        if (isNaN(price) || price < 0) {
+            document.getElementById('prod-form-error-msg').textContent = 'Informe um preço válido.';
+            errEl.classList.remove('hidden');
+            document.getElementById('prod-price').focus();
+            return;
+        }
+        if (isNaN(stock) || stock < 0) {
+            document.getElementById('prod-form-error-msg').textContent = 'Informe uma quantidade de estoque válida.';
+            errEl.classList.remove('hidden');
+            document.getElementById('prod-stock').focus();
+            return;
+        }
+
+        const products = getProducts();
+
+        if (editingProductId) {
+            // Atualiza produto existente
+            const idx = products.findIndex(p => p.id === editingProductId);
+            if (idx !== -1) {
+                products[idx] = { ...products[idx], name, price, stock, updatedAt: new Date().toISOString() };
+            }
+        } else {
+            // Adiciona novo produto
+            products.push({
+                id: generateId(),
+                name,
+                price,
+                stock,
+                createdAt: new Date().toISOString()
+            });
+        }
+
+        saveProducts(products);
+        resetProductForm();
+        renderProducts();
+    }
+
+    function resetProductForm() {
+        editingProductId = null;
+        document.getElementById('prod-name').value  = '';
+        document.getElementById('prod-price').value = '';
+        document.getElementById('prod-stock').value = '';
+        document.getElementById('prod-form-error').classList.add('hidden');
+        document.getElementById('form-card-title').innerHTML = `
+            <span class="material-symbols-outlined text-secondary" style="font-size:18px">add_box</span>
+            Adicionar produto`;
+        document.getElementById('btn-save-label').textContent = 'Salvar produto';
+        document.getElementById('btn-cancel-edit').classList.add('hidden');
+        document.getElementById('prod-name').focus();
+    }
+
+    function startEditProduct(id) {
+        const products = getProducts();
+        const prod = products.find(p => p.id === id);
+        if (!prod) return;
+
+        editingProductId = id;
+        document.getElementById('prod-name').value  = prod.name;
+        document.getElementById('prod-price').value = prod.price;
+        document.getElementById('prod-stock').value = prod.stock;
+        document.getElementById('prod-form-error').classList.add('hidden');
+        document.getElementById('form-card-title').innerHTML = `
+            <span class="material-symbols-outlined text-secondary" style="font-size:18px">edit</span>
+            Editando: <em class="font-normal">${escapeHTMLLocal(prod.name)}</em>`;
+        document.getElementById('btn-save-label').textContent = 'Atualizar produto';
+        document.getElementById('btn-cancel-edit').classList.remove('hidden');
+
+        // Rola até o formulário suavemente
+        document.getElementById('product-form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById('prod-name').focus();
+    }
+
+    function deleteProduct(id) {
+        const products = getProducts().filter(p => p.id !== id);
+        saveProducts(products);
+        if (editingProductId === id) resetProductForm();
+        renderProducts();
+    }
+
+    function renderProducts() {
+        const search   = (document.getElementById('prod-search')?.value || '').trim().toLowerCase();
+        const products = getProducts();
+        const filtered = search
+            ? products.filter(p => p.name.toLowerCase().includes(search))
+            : products;
+
+        const list    = document.getElementById('prod-list');
+        const empty   = document.getElementById('prod-empty');
+        const counter = document.getElementById('prod-count');
+
+        counter.textContent = `${products.length} ${products.length === 1 ? 'item' : 'itens'}`;
+
+        if (filtered.length === 0) {
+            list.innerHTML = '';
+            empty.classList.remove('hidden');
+            return;
+        }
+
+        empty.classList.add('hidden');
+        list.innerHTML = filtered.map(prod => `
+            <div class="flex items-center gap-sm bg-surface-container-lowest border border-outline-variant rounded-xl px-sm py-sm hover:bg-surface-container-low transition-colors group"
+                 data-id="${escapeHTMLLocal(prod.id)}">
+                <div class="flex items-center justify-center w-9 h-9 rounded-full bg-surface-container shrink-0">
+                    <span class="material-symbols-outlined text-secondary" style="font-size:18px">inventory_2</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-body-sm font-semibold text-on-surface truncate">${escapeHTMLLocal(prod.name)}</p>
+                    <div class="flex items-center gap-sm mt-xs flex-wrap">
+                        <span class="text-label-caps font-label-caps text-secondary uppercase flex items-center gap-xs">
+                            <span class="material-symbols-outlined" style="font-size:13px">payments</span>
+                            ${formatPrice(prod.price)}
+                        </span>
+                        <span class="text-label-caps font-label-caps uppercase flex items-center gap-xs ${prod.stock === 0 ? 'text-error' : 'text-secondary'}">
+                            <span class="material-symbols-outlined" style="font-size:13px">package_2</span>
+                            ${prod.stock} em estoque
+                        </span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-xs shrink-0">
+                    <button
+                        onclick="startEditProduct('${escapeHTMLLocal(prod.id)}')"
+                        class="flex items-center justify-center w-8 h-8 rounded-lg text-secondary hover:bg-surface-container-high hover:text-primary transition-colors"
+                        title="Editar">
+                        <span class="material-symbols-outlined" style="font-size:17px">edit</span>
+                    </button>
+                    <button
+                        onclick="confirmDeleteProduct('${escapeHTMLLocal(prod.id)}', '${escapeHTMLLocal(prod.name)}')"
+                        class="flex items-center justify-center w-8 h-8 rounded-lg text-outline hover:bg-error-container hover:text-error transition-colors"
+                        title="Excluir">
+                        <span class="material-symbols-outlined" style="font-size:17px">delete</span>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function confirmDeleteProduct(id, name) {
+        // Modal de confirmação de exclusão
+        let modal = document.getElementById('delete-confirm-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'delete-confirm-modal';
+            modal.className = 'fixed inset-0 z-[100] bg-[#00000070] flex items-center justify-center p-md';
+            document.body.appendChild(modal);
+        }
+        modal.innerHTML = `
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl w-full max-w-sm overflow-hidden fadein">
+                <div class="flex items-center gap-sm p-md border-b border-outline-variant">
+                    <span class="material-symbols-outlined text-error">delete</span>
+                    <h3 class="text-title-sm font-headline-md text-on-surface">Excluir produto</h3>
+                </div>
+                <div class="p-md">
+                    <p class="text-body-md text-on-surface-variant">
+                        Tem certeza que deseja excluir
+                        <strong class="text-on-surface">${escapeHTMLLocal(name)}</strong>?
+                        Esta ação não pode ser desfeita.
+                    </p>
+                </div>
+                <div class="flex justify-end gap-sm p-md border-t border-outline-variant">
+                    <button id="del-cancel-btn"
+                        class="px-md py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors font-semibold text-body-sm">
+                        Cancelar
+                    </button>
+                    <button id="del-confirm-btn"
+                        class="px-md py-sm rounded-lg bg-error text-on-error hover:opacity-90 transition-opacity font-semibold text-body-sm flex items-center gap-xs">
+                        <span class="material-symbols-outlined" style="font-size:16px">delete</span>
+                        Excluir
+                    </button>
+                </div>
+            </div>`;
+        modal.querySelector('#del-cancel-btn').addEventListener('click', () => modal.remove());
+        modal.querySelector('#del-confirm-btn').addEventListener('click', () => {
+            modal.remove();
+            deleteProduct(id);
+        });
+        modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    }
+
+    // Expõe funções usadas inline no HTML gerado
+    window.startEditProduct    = startEditProduct;
+    window.confirmDeleteProduct = confirmDeleteProduct;
+
+    function escapeHTMLLocal(str) {
+        return String(str || '').replace(/[&<>"']/g, c =>
+            ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[c])
+        );
+    }
 
     /* ── CADASTRO ── */
     document.getElementById('form-register').addEventListener('submit', function (e) {
