@@ -630,6 +630,8 @@
             header.className = 'flex justify-between items-center w-full px-lg py-sm sticky top-0 z-40 bg-surface text-primary border-b border-outline-variant shrink-0';
             header.innerHTML = buildTopbarHTML(pageMeta[page]);
         });
+
+        window.AuthSession?.initProfileMenu?.();
     }
 
     function buildSidebarHTML(activePage) {

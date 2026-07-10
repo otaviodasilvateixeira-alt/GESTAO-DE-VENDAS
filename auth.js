@@ -39,6 +39,10 @@
     window.AuthSession = {
         getUser: getSession,
 
+        initProfileMenu: function () {
+            if (getSession()) injectProfileDropdown();
+        },
+
         logout: function () {
             const s = getSession();
             if (s) {
@@ -62,10 +66,43 @@
     /* ── Dropdown de perfil ── */
     document.addEventListener('DOMContentLoaded', function () {
         if (!session) return;
+        bindProfileDelegation();
         injectProfileDropdown();
+        setTimeout(injectProfileDropdown, 0);
         // Suprime o toast padrão do app.js no botão account_circle
         suppressDefaultProfileToast();
     });
+
+    function bindProfileDelegation() {
+        if (document.body.dataset.profileDelegationBound === 'true') return;
+        document.body.dataset.profileDelegationBound = 'true';
+
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+
+            const icon = btn.querySelector('.material-symbols-outlined');
+            const isProfileButton = btn.dataset.profileTrigger === 'true' ||
+                (icon && icon.textContent.trim() === 'account_circle');
+
+            if (!isProfileButton) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+
+            injectProfileDropdown();
+            const dropdown = document.getElementById('profile-dropdown');
+            if (!dropdown) return;
+
+            if (btn.dataset.profileTrigger !== 'true') {
+                enhanceProfileButton(btn);
+                btn.setAttribute('data-profile-trigger', 'true');
+            }
+
+            toggleDropdown(btn, dropdown);
+        }, true);
+    }
 
     function injectProfileDropdown() {
         // Encontra TODOS os botões account_circle na página
@@ -77,11 +114,16 @@
         if (!profileBtns.length) return;
 
         // Cria o dropdown (único, compartilhado)
-        const dropdown = buildDropdown();
-        document.body.appendChild(dropdown);
+        let dropdown = document.getElementById('profile-dropdown');
+        if (!dropdown) {
+            dropdown = buildDropdown();
+            document.body.appendChild(dropdown);
+        }
 
         // Associa cada botão de perfil ao dropdown
         profileBtns.forEach(btn => {
+            if (btn.dataset.profileTrigger === 'true') return;
+
             // Melhora a aparência do botão: mostra inicial do nome
             enhanceProfileButton(btn);
 
@@ -94,19 +136,40 @@
             });
         });
 
-        // Fecha ao clicar fora
-        document.addEventListener('click', function (e) {
-            if (!dropdown.contains(e.target)) {
-                closeDropdown(dropdown);
-            }
-        });
+        if (dropdown.dataset.closeEventsBound !== 'true') {
+            dropdown.dataset.closeEventsBound = 'true';
 
-        // Fecha com ESC
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeDropdown(dropdown);
-        });
+            // Fecha ao clicar fora
+            document.addEventListener('click', function (e) {
+                if (!dropdown.contains(e.target)) {
+                    closeDropdown(dropdown);
+                }
+            });
+
+            // Fecha com ESC
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeDropdown(dropdown);
+            });
+        }
 
         // Botão sair dentro do dropdown
+        if (dropdown.dataset.actionsBound === 'true') return;
+        dropdown.dataset.actionsBound = 'true';
+
+        dropdown.querySelector('#profile-copy-user-btn').addEventListener('click', function () {
+            copyUsername(dropdown);
+        });
+
+        dropdown.querySelector('#profile-sync-btn').addEventListener('click', function () {
+            window.AuthSession.syncUserData();
+            showProfileMessage(dropdown, 'Dados da conta salvos neste dispositivo.');
+        });
+
+        dropdown.querySelector('#profile-reload-btn').addEventListener('click', function () {
+            closeDropdown(dropdown);
+            window.location.reload();
+        });
+
         dropdown.querySelector('#profile-logout-btn').addEventListener('click', function () {
             closeDropdown(dropdown);
             showLogoutConfirm();
@@ -169,10 +232,32 @@
                     <span class="material-symbols-outlined" style="font-size:16px">devices</span>
                     <span>Sessão local neste dispositivo</span>
                 </div>
+                <div id="profile-action-message" class="hidden text-body-sm text-primary font-semibold"></div>
             </div>
 
             <!-- Ações -->
             <div class="p-sm flex flex-col gap-xs">
+                <button id="profile-copy-user-btn"
+                    class="w-full flex items-center gap-sm px-sm py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors text-body-sm"
+                    type="button"
+                >
+                    <span class="material-symbols-outlined" style="font-size:18px">content_copy</span>
+                    Copiar usuario
+                </button>
+                <button id="profile-sync-btn"
+                    class="w-full flex items-center gap-sm px-sm py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors text-body-sm"
+                    type="button"
+                >
+                    <span class="material-symbols-outlined" style="font-size:18px">save</span>
+                    Salvar dados da conta
+                </button>
+                <button id="profile-reload-btn"
+                    class="w-full flex items-center gap-sm px-sm py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors text-body-sm"
+                    type="button"
+                >
+                    <span class="material-symbols-outlined" style="font-size:18px">refresh</span>
+                    Atualizar sistema
+                </button>
                 <a href="configuracoes.html"
                     class="flex items-center gap-sm px-sm py-sm rounded-lg text-secondary hover:bg-surface-container-high transition-colors text-body-sm"
                 >
@@ -189,6 +274,50 @@
         `;
 
         return div;
+    }
+
+    function showProfileMessage(dropdown, message) {
+        const messageBox = dropdown.querySelector('#profile-action-message');
+        if (!messageBox) return;
+        messageBox.textContent = message;
+        messageBox.classList.remove('hidden');
+        clearTimeout(showProfileMessage.timer);
+        showProfileMessage.timer = setTimeout(() => {
+            messageBox.classList.add('hidden');
+        }, 2200);
+    }
+
+    function copyUsername(dropdown) {
+        const text = session.username || '';
+        if (!text) return;
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text)
+                .then(() => showProfileMessage(dropdown, 'Usuario copiado.'))
+                .catch(() => fallbackCopyUsername(dropdown, text));
+            return;
+        }
+
+        fallbackCopyUsername(dropdown, text);
+    }
+
+    function fallbackCopyUsername(dropdown, text) {
+        const input = document.createElement('input');
+        input.value = text;
+        input.setAttribute('readonly', '');
+        input.style.position = 'fixed';
+        input.style.left = '-9999px';
+        document.body.appendChild(input);
+        input.select();
+
+        try {
+            document.execCommand('copy');
+            showProfileMessage(dropdown, 'Usuario copiado.');
+        } catch (error) {
+            showProfileMessage(dropdown, 'Nao foi possivel copiar agora.');
+        } finally {
+            input.remove();
+        }
     }
 
     function toggleDropdown(btn, dropdown) {
