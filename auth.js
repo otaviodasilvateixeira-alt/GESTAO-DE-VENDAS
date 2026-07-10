@@ -87,7 +87,9 @@
 
             btn.setAttribute('data-profile-trigger', 'true');
             btn.addEventListener('click', function (e) {
+                e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
                 toggleDropdown(btn, dropdown);
             });
         });
