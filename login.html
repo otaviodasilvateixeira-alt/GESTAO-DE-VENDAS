@@ -457,8 +457,8 @@
                 localStorage.setItem('proledger_app_data', userData);
             }
 
-            // Abre o painel de produtos em vez de redirecionar direto
-            openProductsPanel(username, isMaster ? 'Administrador' : (user.name || username));
+            // Vai direto para o dashboard apos o login
+            window.location.replace('index.html');
         }, 400);
     });
 
